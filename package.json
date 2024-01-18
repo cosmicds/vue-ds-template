@@ -2,12 +2,34 @@
   "draft": true,
   "version": "0.0.0",
   "dependencies": {
-    "@minids/common": "workspace:0.0.0"
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/vue-fontawesome": "^3.0.5",
+    "@minids/common": "git+https://github.com/Carifio24/minids#repo-split",
+    "vue": "^3.4.15",
+    "vuetify": "^3.4.11",
+    "webpack-plugin-vuetify": "^3.0.1"
   },
   "scripts": {
     "build": "vue-cli-service build",
     "clean": "rimraf dist",
     "lint": "vue-cli-service lint src --no-fix",
     "serve": "vue-cli-service serve"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "@typescript-eslint/typescript-estree": "^6.19.0",
+    "@vue/cli-plugin-eslint": "^5.0.8",
+    "@vue/cli-plugin-typescript": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
+    "@vue/compiler-sfc": "^3.4.15",
+    "@vue/eslint-config-typescript": "^12.0.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-vue": "^9.20.1",
+    "less": "^4.2.0",
+    "less-loader": "^12.0.0",
+    "typescript": "^5.3.3",
+    "webpack": "^5.89.0"
   }
 }
