@@ -28,7 +28,7 @@ if [[ -d $name ]] | [[ -h $name ]]; then
     exit 2
 fi
 
-node ../scripts/update-name.js "@minids/${name}"
+node scripts/update-name.js "@minids/${name}"
 pascal_case_name=$(to_pascal_case $name)
 title=$(space_split_pascal ${pascal_case_name})
 
