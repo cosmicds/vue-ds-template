@@ -238,7 +238,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { MiniDSBase, BackgroundImageset, skyBackgroundImagesets } from "@minids/common";
+import { MiniDSBase, BackgroundImageset, skyBackgroundImagesets } from "@cosmicds/vue-toolkit";
 import { GotoRADecZoomParams } from "@wwtelescope/engine-pinia";
 
 type SheetType = "text" | "video" | null;
