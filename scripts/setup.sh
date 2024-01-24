@@ -41,4 +41,4 @@ rm -f index.html.bak
 
 # Clear out git info since we don't want this to point to the vue-ds-template repo anymore
 cd ..
-rm -r .git
+rm -rf .git
