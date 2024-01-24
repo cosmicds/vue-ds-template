@@ -13,7 +13,7 @@ function space_split_pascal {
 }
 
 if [[ $# -lt 1 ]]; then
-    echo "Mini name is missing!"
+    echo "Story name is missing!"
     exit 2
 fi
 if [[ $# -gt 1 ]]; then
@@ -23,23 +23,22 @@ fi
 
 name=$1
 
-if [[ -d $name ]] | [[ -h $name ]]; then
-    echo "A directory for this mini already exists!"
-    exit 2
-fi
-
-node scripts/update-name.js "@minids/${name}"
+node scripts/update-name.js "@cosmicds/${name}"
 pascal_case_name=$(to_pascal_case $name)
 title=$(space_split_pascal ${pascal_case_name})
 
 cd src
 sed -i.bak "s/MainComponent/${pascal_case_name}/g" main.ts
-sed -i.bak "s/wwt-minids-template/wwt-minids-$name/g" main.ts
+sed -i.bak "s/wwt-minids-template/$name/g" main.ts
 rm -f main.ts.bak
 mv MainComponent.vue ${pascal_case_name}.vue
 
 cd ../public
 sed -i.bak "s/minids-template/$name/g" index.html
-sed -i.bak "s/MiniDS data story template/$pascal_case_name/g" index.html
-sed -i.bak "s/MiniDS Template/$title/g" index.html
+sed -i.bak "s/CosmicDS data story template/$pascal_case_name/g" index.html
+sed -i.bak "s/CosmicDS Template/$title/g" index.html
 rm -f index.html.bak
+
+# Clear out git info since we don't want this to point to the vue-ds-template repo anymore
+cd ..
+rm -rf .git

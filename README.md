@@ -21,10 +21,12 @@ If you get complaints that the script isn't executable, make it so by running `c
     - To preview the story using the development server, run `yarn serve`
     - To build the story for production use, run `yarn build`
 
-## Deployment
+## Deployment and Github Actions
 
-The built story is just a set of HTML/CSS/JS + any assets that you add, so it should be easy to host anywhere. One simple way to host a story is using Github Pages, which provides a free static site hosting service for public repositories. This can even be done automatically using Github Actions - see the `build-deploy` in the [Carina data story](https://github.com/cosmicds/carinads) for an example.
+The built story is just a set of HTML/CSS/JS + any assets that you add, so it should be easy to host anywhere. One simple way to host a story is using Github Pages, which provides a free static site hosting service for public repositories. This repository provides two workflows (see the `.github/workflows` directory) to help with this:
+* `build.yml` - on a pull request, build the PR version of the story (to test that it at least builds successfully)
+* `build-deploy.yml` - on a commit to main, build the story and push the built version to the `gh-pages` branch. This built version can then be deployed to Github Pages in the repository settings: `Settings > Pages`, then choose `Deploy from a branch` and use the `gh-pages` branch.
 
 ## BrowserStack testing - CosmicDS team
 
-If you're a member of the CosmicDS team, we can perform E2E testing (both locally and in Github Actions) using BrowserStack. See the tests in the [Carina data story](https://github.com/cosmicds/carinads) as an example. Note that you'll need to have our BrowserStack username and access key for this to work correctly.
+If you're a member of the CosmicDS team, we can perform E2E testing (both locally and in Github Actions) using BrowserStack. To activate this testing, uncomment the relevant pieces in the provided workflows. Note that you'll need to have our BrowserStack username and access key for this to work correctly. (If the repository that you're working on is part of the CosmicDS organization, you shouldn't need to add these at the repository level).
