@@ -263,8 +263,9 @@ export default defineComponent({
     }
   },
   data() {
+    const showSplashScreen = new URLSearchParams(window.location.search).get("splash")?.toLowerCase() !== "false";
     return {
-      showSplashScreen: true,
+      showSplashScreen,
       backgroundImagesets: [] as BackgroundImageset[],
       sheet: null as SheetType,
       layersLoaded: false,
