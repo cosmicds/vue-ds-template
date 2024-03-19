@@ -517,7 +517,7 @@ body {
 
 #splash-screen {
   color: #FFFFFF;
-  background-color: #FFFFFF;
+  background-color: #000000;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
