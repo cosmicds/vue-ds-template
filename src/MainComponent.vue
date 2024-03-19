@@ -495,6 +495,12 @@ body {
   align-items: flex-start;
 }
 
+#left-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 #bottom-content {
   display: flex;
   flex-direction: column;
