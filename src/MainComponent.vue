@@ -378,7 +378,7 @@ export default defineComponent({
 <style lang="less">
 @font-face {
   font-family: "Highway Gothic Narrow";
-  src: url("https://projects.cosmicds.cfa.harvard.edu/cds-website/fonts/HighwayGothicNarrow.ttf");
+  src: url("./assets/HighwayGothicNarrow.ttf");
 }
 
 :root {
