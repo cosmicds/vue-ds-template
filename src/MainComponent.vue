@@ -239,7 +239,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, nextTick } from "vue";
 import { GotoRADecZoomParams, engineStore } from "@wwtelescope/engine-pinia";
-import { BackgroundImageset, skyBackgroundImagesets, supportsTouchscreen, blurActiveElement } from "@cosmicds/vue-toolkit";
+import { BackgroundImageset, skyBackgroundImagesets, supportsTouchscreen, blurActiveElement, useWWTKeyboardControls } from "@cosmicds/vue-toolkit";
 import { useDisplay } from "vuetify";
 
 type SheetType = "text" | "video";
@@ -250,6 +250,8 @@ export interface MainComponentProps {
 }
 
 const store = engineStore();
+
+useWWTKeyboardControls(store);
 
 const touchscreen = supportsTouchscreen();
 const { smAndDown } = useDisplay();
