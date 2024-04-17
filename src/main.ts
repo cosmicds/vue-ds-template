@@ -1,6 +1,6 @@
-import Vue, { createApp } from "vue";
+import Vue, { createApp, type Plugin } from "vue";
 
-import { FundingAcknowledgment, IconButton, CreditLogos } from "@cosmicds/vue-toolkit";
+import { FundingAcknowledgement, IconButton, CreditLogos } from "@cosmicds/vue-toolkit";
 import MainComponent from "./MainComponent.vue";
 
 import vuetify from "../plugins/vuetify";
@@ -25,11 +25,11 @@ library.add(faVideo);
 const update = (el: HTMLElement, binding: Vue.DirectiveBinding) => el.style.visibility = (binding.value) ? "hidden" : "";
 
 createApp(MainComponent, {
-  wwtNamespace: "wwt-minids-template"
+  wwtNamespace: "vue-ds-template"
 })
  
   // Plugins
-  .use(wwtPinia)
+  .use(wwtPinia as unknown as Plugin<[]>)
   .use(vuetify)
 
   // Directives
@@ -52,7 +52,7 @@ createApp(MainComponent, {
   .component("WorldWideTelescope", WWTComponent)
   .component('font-awesome-icon', FontAwesomeIcon)
   .component('icon-button', IconButton)
-  .component('funding-acknowledgement', FundingAcknowledgment)
+  .component('funding-acknowledgement', FundingAcknowledgement)
   .component('credit-logos', CreditLogos)
 
   // Mount

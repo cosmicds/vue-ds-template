@@ -291,11 +291,10 @@ onMounted(() => {
 const ready = computed(() => layersLoaded.value && positionSet.value);
 
 /* `isLoading` is a bit redundant here, but it could potentially have independent logic */
-const isLoading = computed(() => ready.value);
+const isLoading = computed(() => !ready.value);
 
 /* Properties related to device/screen characteristics */
 const smallSize = computed(() => smAndDown);
-// const mobile = computed(() => smallSize.value && touchscreen);
 
 /* This lets us inject component data into element CSS */
 const cssVars = computed(() => {
@@ -354,7 +353,7 @@ function selectSheet(sheetType: SheetType | null) {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 @font-face {
   font-family: "Highway Gothic Narrow";
   src: url("./assets/HighwayGothicNarrow.ttf");
