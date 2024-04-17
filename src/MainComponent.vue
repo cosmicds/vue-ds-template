@@ -236,146 +236,125 @@
 </v-app>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { MiniDSBase, BackgroundImageset, skyBackgroundImagesets } from "@cosmicds/vue-toolkit";
-import { GotoRADecZoomParams } from "@wwtelescope/engine-pinia";
+<script setup lang="ts">
+import { ref, reactive, computed, onMounted, nextTick } from "vue";
+import { GotoRADecZoomParams, engineStore } from "@wwtelescope/engine-pinia";
+import { BackgroundImageset, skyBackgroundImagesets, supportsTouchscreen, blurActiveElement } from "@cosmicds/vue-toolkit";
+import { useDisplay } from "vuetify";
 
-type SheetType = "text" | "video" | null;
+type SheetType = "text" | "video";
+type CameraParams = Omit<GotoRADecZoomParams, "instant">;
+export interface MainComponentProps {
+  wwtNamespace?: string;
+  initialCameraParams?: CameraParams;
+}
 
-export default defineComponent({
-  extends: MiniDSBase,
-  
-  props: {
-    wwtNamespace: {
-      type: String,
-      required: true
-    },
-    initialCameraParams: {
-      type: Object as PropType<Omit<GotoRADecZoomParams, 'instant'>>,
-      default() {
-        return {
-          raRad: 0,
-          decRad: 0,
-          zoomDeg: 60
-        };
-      }
-    }
-  },
-  data() {
-    const showSplashScreen = new URLSearchParams(window.location.search).get("splash")?.toLowerCase() !== "false";
+const store = engineStore();
+
+const touchscreen = supportsTouchscreen();
+const { smAndDown } = useDisplay();
+
+const props = withDefaults(defineProps<MainComponentProps>(), {
+  wwtNamespace: "MainComponent",
+  initialCameraParams: () => {
     return {
-      showSplashScreen,
-      backgroundImagesets: [] as BackgroundImageset[],
-      sheet: null as SheetType,
-      layersLoaded: false,
-      positionSet: false,
-      
-      accentColor: "#ffffff",
-      buttonColor: "#ffffff",
-
-      tab: 0
+      raRad: 0,
+      decRad: 0,
+      zoomDeg: 60
     };
+  }
+});
+
+const splash = new URLSearchParams(window.location.search).get("splash")?.toLowerCase() !== "false";
+const showSplashScreen = ref(splash);
+const backgroundImagesets = reactive<BackgroundImageset[]>([]);
+const sheet = ref<SheetType | null>(null);
+const layersLoaded = ref(false);
+const positionSet = ref(false);
+const accentColor = ref("#ffffff");
+const buttonColor = ref("#ffffff");
+const tab = ref(0);
+
+onMounted(() => {
+  store.waitForReady().then(async () => {
+    skyBackgroundImagesets.forEach(iset => backgroundImagesets.push(iset));
+    store.gotoRADecZoom({
+      ...props.initialCameraParams,
+      instant: true
+    }).then(() => positionSet.value = true);
+
+    // If there are layers to set up, do that here!
+    layersLoaded.value = true;
+  });
+});
+
+const ready = computed(() => layersLoaded.value && positionSet.value);
+
+/* `isLoading` is a bit redundant here, but it could potentially have independent logic */
+const isLoading = computed(() => ready.value);
+
+/* Properties related to device/screen characteristics */
+const smallSize = computed(() => smAndDown);
+// const mobile = computed(() => smallSize.value && touchscreen);
+
+/* This lets us inject component data into element CSS */
+const cssVars = computed(() => {
+  return {
+    "--accent-color": accentColor.value,
+    "--app-content-height": showTextSheet.value ? "66%" : "100%",
+  };
+});
+
+
+/**
+  Computed flags that control whether the relevant dialogs display.
+  The `sheet` data member stores which sheet is open, so these are just
+  computed wrappers around modifying/querying that which can be used as
+  dialog v-model values
+*/
+const showTextSheet = computed({
+  get() {
+    return sheet.value === "text";
   },
+  set(_value: boolean) {
+    selectSheet("text");
+  }
+});
 
-  mounted() {
-    this.waitForReady().then(async () => {
-      
-      this.backgroundImagesets = [...skyBackgroundImagesets];
-
-      this.gotoRADecZoom({
-        ...this.initialCameraParams,
-        instant: true
-      }).then(() => this.positionSet = true);
-
-      // If there are layers to set up, do that here!
-      this.layersLoaded = true;
-
-    });
+const showVideoSheet = computed({
+  get() {
+    return sheet.value === "video";
   },
-
-  computed: {
-
-    /**
-    These properties relate to the state of the mini.
-    `isLoading` is a bit redundant here, but it could potentially have
-    independent logic.
-    */
-    ready(): boolean {
-      return this.layersLoaded && this.positionSet;
-    },
-    isLoading(): boolean {
-      return !this.ready;
-    },
-
-    /**
-    Properties related to device/screen characteristics
-    */
-    smallSize(): boolean {
-      return this.$vuetify.display.smAndDown;
-    },
-    mobile(): boolean {
-      return this.smallSize && this.touchscreen;
-    },
-
-    /**
-    This lets us inject component data into element CSS
-    */
-    cssVars() {
-      return {
-        '--accent-color': this.accentColor,
-        '--app-content-height': this.showTextSheet ? '66%' : '100%',
-      };
-    },
-
-    /**
-    Computed flags that control whether the relevant dialogs display.
-    The `sheet` data member stores which sheet is open, so these are just
-    computed wrappers around modifying/querying that which can be used as
-    dialog v-model values
-    */
-    showTextSheet: {
-      get(): boolean {
-        return this.sheet === 'text';
-      },
-      set(_value: boolean) {
-        this.selectSheet('text');
-      }
-    },
-    showVideoSheet: {
-      get(): boolean {
-        return this.sheet === "video";
-      },
-      set(value: boolean) {
-        this.selectSheet('video');
-        if (!value) {
-          const video = document.querySelector("#info-video") as HTMLVideoElement;
-          video.pause();
-        }
-      }
-    }
-  },
-
-  methods: {
-    closeSplashScreen() {
-      this.showSplashScreen = false; 
-    },
-
-    selectSheet(name: SheetType) {
-      if (this.sheet === name) {
-        this.sheet = null;
-        this.$nextTick(() => {
-          this.blurActiveElement();
-        });
-      } else {
-        this.sheet = name;
-      }
+  set(value: boolean) {
+    selectSheet("video");
+    if (!value) {
+      const video = document.querySelector("#info-video") as HTMLVideoElement;
+      video.pause();
     }
   }
 });
+
+/**
+  This is convenient if there's any other logic that we want to run
+  when the splash screen is closed
+*/
+function closeSplashScreen() {
+  showSplashScreen.value = false;
+}
+
+function selectSheet(sheetType: SheetType | null) {
+  if (sheet.value === sheetType) {
+    sheet.value = null;
+    nextTick(() => {
+      blurActiveElement();
+    });
+  } else {
+    sheet.value = sheetType;
+  }
+}
 </script>
 
-<style lang="less">
+<style scoped lang="less">
 @font-face {
   font-family: "Highway Gothic Narrow";
   src: url("./assets/HighwayGothicNarrow.ttf");
