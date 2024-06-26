@@ -13,7 +13,7 @@ git clone https://github.com/cosmicds/vue-ds-template.git <my-story-name>
 * Next, you can run the setup script to do some basic renaming for you. You should give the story name in `kebab-case`. Where conventions dictate, the script will automatically rename using `PascalCase` and `camelCase`.
 ```
 cd <my-story-name>
-scripts/setup.sh
+scripts/setup.sh <my-story-name>
 ```
 If you get complaints that the script isn't executable, make it so by running `chmod +x scripts/setup.sh`.
 
