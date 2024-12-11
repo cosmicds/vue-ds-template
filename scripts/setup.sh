@@ -29,6 +29,7 @@ title=$(space_split_pascal ${pascal_case_name})
 
 cd src
 sed -i.bak "s/MainComponent/${pascal_case_name}/g" main.ts
+sed -i.bak "s/MainComponent/${pascal_case_name}/g" MainComponent.vue
 sed -i.bak "s/wwt-minids-template/$name/g" main.ts
 rm -f main.ts.bak
 mv MainComponent.vue ${pascal_case_name}.vue
