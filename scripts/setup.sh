@@ -30,12 +30,12 @@ title=$(space_split_pascal ${pascal_case_name})
 cd src
 sed -i.bak "s/MainComponent/${pascal_case_name}/g" main.ts
 sed -i.bak "s/MainComponent/${pascal_case_name}/g" MainComponent.vue
-sed -i.bak "s/wwt-minids-template/$name/g" main.ts
+sed -i.bak "s/vue-ds-template/$name/g" main.ts
+sed -i.bak "s/vue-ds-template/$name/g" MainComponent.vue
 rm -f main.ts.bak
 mv MainComponent.vue ${pascal_case_name}.vue
 
 cd ../public
-sed -i.bak "s/minids-template/$name/g" index.html
 sed -i.bak "s/CosmicDS data story template/$pascal_case_name/g" index.html
 sed -i.bak "s/CosmicDS Vue template/$title/g" index.html
 sed -i.bak "s/CosmicDS Vue Template/$title/g" index.html
