@@ -257,7 +257,7 @@ const touchscreen = supportsTouchscreen();
 const { smAndDown } = useDisplay();
 
 const props = withDefaults(defineProps<MainComponentProps>(), {
-  wwtNamespace: "MainComponent",
+  wwtNamespace: "vue-ds-template",
   initialCameraParams: () => {
     return {
       raRad: 0,
