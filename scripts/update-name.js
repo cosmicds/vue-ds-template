@@ -3,7 +3,7 @@ const { updatePackageData } = require("./utils");
 
 const name = argv[2];
 if (!name) {
-  console.error("Missing name of new mini!");
+  console.error("Missing name of new story!");
   exit(1);
 }
 
