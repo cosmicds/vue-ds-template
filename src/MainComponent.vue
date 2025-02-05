@@ -481,6 +481,13 @@ body {
   gap: 10px;
 }
 
+#center-buttons {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 #bottom-content {
   display: flex;
   flex-direction: column;
