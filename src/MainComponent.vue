@@ -470,7 +470,6 @@ body {
   width: calc(100% - 2rem);
   pointer-events: none;
   display: flex;
-  flex-direction: column;
   justify-content: space-around;
   align-items: flex-start;
 }
@@ -481,17 +480,9 @@ body {
   gap: 10px;
 }
 
-#center-buttons {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
 #right-buttons {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
   gap: 10px;
   align-items: flex-end;
   height: auto;
