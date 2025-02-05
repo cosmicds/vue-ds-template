@@ -296,7 +296,7 @@ const ready = computed(() => layersLoaded.value && positionSet.value);
 const isLoading = computed(() => !ready.value);
 
 /* Properties related to device/screen characteristics */
-const smallSize = computed(() => smAndDown);
+const smallSize = computed(() => smAndDown.value);
 
 /* This lets us inject component data into element CSS */
 const cssVars = computed(() => {
