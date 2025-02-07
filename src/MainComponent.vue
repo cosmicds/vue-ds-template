@@ -25,11 +25,13 @@
         v-click-outside="closeSplashScreen"
         :style="cssVars"
       >
-        <div
+        <font-awesome-icon
           id="close-splash-button"
           @click="closeSplashScreen"
-          >&times;
-        </div>
+          @keyup.enter="closeSplashScreen"
+          icon="xmark"
+          tabindex="0"
+        />
         <div id="splash-screen-text">
           <p>Splash Screen Content</p>
         </div>
@@ -164,6 +166,7 @@
             <v-card class="no-bottom-border-radius scrollable">
               <v-card-text class="info-text no-bottom-border-radius">
                 Information goes here
+                <v-spacer class="end-spacer"></v-spacer>
               </v-card-text>
             </v-card>
           </v-window-item>
@@ -296,7 +299,7 @@ const ready = computed(() => layersLoaded.value && positionSet.value);
 const isLoading = computed(() => !ready.value);
 
 /* Properties related to device/screen characteristics */
-const smallSize = computed(() => smAndDown);
+const smallSize = computed(() => smAndDown.value);
 
 /* This lets us inject component data into element CSS */
 const cssVars = computed(() => {
@@ -470,8 +473,7 @@ body {
   width: calc(100% - 2rem);
   pointer-events: none;
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: flex-start;
 }
 
@@ -479,6 +481,14 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+#right-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+  height: auto;
 }
 
 #bottom-content {
@@ -551,6 +561,16 @@ body {
       cursor: pointer;
     }
   }
+}
+
+// From Sara Soueidan (https://www.sarasoueidan.com/blog/focus-indicators/) & Erik Kroes (https://www.erikkroes.nl/blog/the-universal-focus-state/)
+:focus-visible,
+button:focus-visible,
+.focus-visible,
+.v-selection-control--focus-visible .v-selection-control__input {
+  outline: 9px double white !important;
+  box-shadow: 0 0 0 6px black !important;
+  border-radius: .125rem;
 }
 
 .video-wrapper {
