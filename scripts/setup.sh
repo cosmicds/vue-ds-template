@@ -34,11 +34,11 @@ sed -i.bak "s/vue-ds-template/$name/g" main.ts
 sed -i.bak "s/vue-ds-template/$name/g" MainComponent.vue
 rm -f main.ts.bak
 mv MainComponent.vue ${pascal_case_name}.vue
+rm -f MainComponent.vue.bak
 
 cd ../public
 sed -i.bak "s/CosmicDS data story template/$pascal_case_name/g" index.html
 sed -i.bak "s/CosmicDS Vue template/$title/g" index.html
-sed -i.bak "s/CosmicDS Vue Template/$title/g" index.html
 sed -i.bak "s/CosmicDS Vue Template/$title/g" site.webmanifest
 rm -f index.html.bak
 rm -f site.webmanifest.bak
