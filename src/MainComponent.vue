@@ -128,17 +128,16 @@
 
     <v-dialog
       :style="cssVars"
-      class="bottom-sheet"
-      id="text-bottom-sheet"
+      :class="['info-sheet', `info-sheet-${infoSheetLocation}`]"
+      id="text-info-sheet"
       hide-overlay
       persistent
       no-click-animation
       absolute
-      width="100%"
       :scrim="false"
       location="bottom"
       v-model="showTextSheet"
-      transition="dialog-bottom-transition"
+      :transition="infoSheetTransition"
     >
       <v-card height="100%">
         <v-tabs
@@ -301,11 +300,25 @@ const isLoading = computed(() => !ready.value);
 /* Properties related to device/screen characteristics */
 const smallSize = computed(() => smAndDown.value);
 
+/** Values related to setting the info sheet size and position */
+const infoFraction = 34;
+const tall = computed(() => smAndDown.value);
+const widescreenInfoLocation = ref<"right" | "bottom">("right");
+const infoSheetLocation = computed(() => tall.value || widescreenInfoLocation.value === "bottom" ? "bottom" : "right");
+const infoSheetHeight = computed(() => infoSheetLocation.value === "bottom" ? `${infoFraction}%` : "100%");
+const infoSheetWidth = computed(() => infoSheetLocation.value === "bottom" ? "100%" : `${infoFraction}%`);
+const infoTextHeight = computed(() => infoSheetLocation.value === "bottom" ? `calc(${infoFraction}vh - 25px)` : "calc(100vh - 25px)");
+const infoSheetTransition = computed(() => infoSheetLocation.value === "bottom" ? "dialog-bottom-transition" : "tab-reverse-transition");
+
 /* This lets us inject component data into element CSS */
 const cssVars = computed(() => {
   return {
     "--accent-color": accentColor.value,
-    "--app-content-height": showTextSheet.value ? "66%" : "100%",
+    "--app-content-height": showTextSheet.value && infoSheetLocation.value === "bottom" ? `${100 - infoFraction}%` : "100%",
+    "--app-content-width": showTextSheet.value && infoSheetLocation.value === "right" ? `${100 - infoFraction}%` : "100%",
+    "--info-sheet-width": infoSheetWidth.value,
+    "--info-sheet-height": infoSheetHeight.value,
+    "--info-text-height": infoTextHeight.value,
   };
 });
 
@@ -394,7 +407,7 @@ body {
 
 #main-content {
   position: fixed;
-  width: 100%;
+  width: var(--app-content-width);
   height: var(--app-content-height);
   overflow: hidden;
 
@@ -615,22 +628,38 @@ video {
   z-index: 10;
 }
 
-.bottom-sheet {
+.info-sheet {
   .v-overlay__content {
     align-self: flex-end;
     padding: 0;
     margin: 0;
     max-width: 100%;
-    height: 34%;
+    height: var(--info-sheet-height);
+    width: var(--info-sheet-width);
+  }
+
+  &.info-sheet-right .v-overlay__content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    max-height: 100%;
+
+    & .v-card, & .v-card .v-window {
+      height: 100%;
+    }
+    
+    & .info-tabs h3 {
+      font-size: 10pt;
+    }
   }
 
   #tabs {
     width: calc(100% - 3em);
     align-self: left;
   }
-  
+
   .info-text {
-    height: 33vh;
+    height: var(--info-text-height);
     padding-bottom: 25px;
   
     & a {
