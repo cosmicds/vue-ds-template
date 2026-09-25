@@ -19,7 +19,6 @@ tsconfig.tsbuildinfo
 .DS_Store
 */.DS_Store
 */*/.DS_Store
-.vscode/settings.json
 
 **/tests_output/**
 

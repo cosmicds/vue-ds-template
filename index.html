@@ -24,6 +24,35 @@
       gtag('config', 'G-C2ELSYY9VC');
     }
   </script>
+  
+  <script>
+    // webgl detection block
+    function isWebGL2Enabled() {
+      // It doesn't seem like there's a better way to do this than just to try and get a context
+      // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/By_example/Detect_WebGL
+      // NB: The engine specifically wants a webgl2 context
+      const canvas = document.createElement("canvas");
+      const gl = canvas.getContext("webgl2");
+      return gl instanceof WebGL2RenderingContext;
+    }
+
+    // read by WebGlTest.vue; nothing is blocked from loading here
+    window.showWebGL2Warning = !isWebGL2Enabled();
+  </script>
+
+  <!-- Declared here once for the whole app rather than in MainComponent's stylesheet, since
+       component stylesheets are unscoped and this avoids re-declaring it if that content ever
+       splits across files. Served as woff2 - 17kB, against 55kB as TrueType - with the .ttf
+       original kept as a fallback src. Not preloaded: fetching it up front only pushes the app
+       bundle back, and `font-display: swap` keeps text readable in a fallback face until it lands. -->
+  <style>
+    @font-face {
+      font-family: "Highway Gothic Narrow";
+      src: url("./fonts/HighwayGothicNarrow.woff2") format("woff2"),
+           url("./fonts/HighwayGothicNarrow.ttf") format("truetype");
+      font-display: swap;
+    }
+  </style>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
@@ -48,17 +77,17 @@
   <link rel="apple-touch-icon" sizes="114x114" href="https://projects.cosmicds.cfa.harvard.edu/cds-website/cosmicds-favicon-114.png">
   <link rel="apple-touch-icon" sizes="144x144" href="https://projects.cosmicds.cfa.harvard.edu/cds-website/cosmicds-favicon-144.png">
   <link rel="shortcut icon" href="https://projects.cosmicds.cfa.harvard.edu/cds-website/cosmicds-favicon.ico">
-  <meta name="apple-mobile-web-app-title" content="CosmicDS Vue Template">
+  <meta name="apple-mobile-web-app-title" content="CosmicDS Vue template">
   <link rel="manifest" href="site.webmanifest">
-  <title>CosmicDS Vue Template</title>
+  <title>CosmicDS Vue template</title>
 </head>
 
 <body>
   <noscript>
     <strong>This page requires JavaScript to run.</strong>
   </noscript>
-  <div id="app"></div>
-  <!-- built files will be auto injected -->
+  <div id="app-mount"></div>
+  <script type="module" src="/src/main.ts"></script>
 </body>
 
 </html>
