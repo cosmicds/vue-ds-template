@@ -25,6 +25,8 @@ export default defineConfig({
     // a yarn-linked package is not pre-bundled by default, so its UMD entry would be served raw
     include: [
       '@cosmicds/vue-toolkit',
+      '@wwtelescope/engine',
+      '@wwtelescope/engine-pinia',
     ],
   },
   define: { 'process.env': {} },
