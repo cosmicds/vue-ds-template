@@ -822,55 +822,50 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wwtelescope/astro@npm:>=0.1.0, @wwtelescope/astro@npm:>=0.2.2":
-  version: 0.3.3
-  resolution: "@wwtelescope/astro@npm:0.3.3"
-  checksum: 10c0/fbf591be850fe81ae8c003fea8c5f7bd305dae187de8158f95d17a21db32e26034c3c3e5cfe633cfb5a5222f8ebbfe8f9916eff646a5a4b52af08b6f4090bd88
+"@wwtelescope/astro@portal:../../wwt-webgl-engine/astro::locator=root-workspace-0b6124%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@wwtelescope/astro@portal:../../wwt-webgl-engine/astro::locator=root-workspace-0b6124%40workspace%3A."
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@wwtelescope/engine-helpers@npm:>=0.18.0":
-  version: 0.18.0
-  resolution: "@wwtelescope/engine-helpers@npm:0.18.0"
+"@wwtelescope/engine-helpers@portal:../../wwt-webgl-engine/engine-helpers::locator=root-workspace-0b6124%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@wwtelescope/engine-helpers@portal:../../wwt-webgl-engine/engine-helpers::locator=root-workspace-0b6124%40workspace%3A."
   dependencies:
-    "@wwtelescope/astro": "npm:>=0.1.0"
-    "@wwtelescope/engine": "npm:^7.36.0"
-    "@wwtelescope/engine-types": "npm:>=0.6.0"
-  checksum: 10c0/5b1fdd7650ec6360ddaeca307a2ed474fcd059b77f611d7073da1fa9f7bc1ea66d880d385058ff2e002f95366c091c74f8ce53c9df7fe82167d6804543aabf1b
+    "@wwtelescope/astro": "workspace:0.0.0-dev.0"
+    "@wwtelescope/engine": "workspace:0.0.0-dev.0"
+    "@wwtelescope/engine-types": "workspace:0.0.0-dev.0"
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@wwtelescope/engine-pinia@npm:>=0.15.0 <1.0.0, @wwtelescope/engine-pinia@npm:>=0.16.0 <1.0.0":
-  version: 0.16.0
-  resolution: "@wwtelescope/engine-pinia@npm:0.16.0"
+"@wwtelescope/engine-pinia@portal:../../wwt-webgl-engine/engine-pinia::locator=root-workspace-0b6124%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@wwtelescope/engine-pinia@portal:../../wwt-webgl-engine/engine-pinia::locator=root-workspace-0b6124%40workspace%3A."
   dependencies:
-    "@wwtelescope/astro": "npm:>=0.2.2"
-    "@wwtelescope/engine": "npm:^7.40.0"
-    "@wwtelescope/engine-helpers": "npm:>=0.18.0"
-    "@wwtelescope/engine-types": "npm:>=0.6.3"
+    "@wwtelescope/astro": "workspace:0.0.0-dev.0"
+    "@wwtelescope/engine": "workspace:0.0.0-dev.0"
+    "@wwtelescope/engine-helpers": "workspace:0.0.0-dev.0"
+    "@wwtelescope/engine-types": "workspace:0.0.0-dev.0"
     pinia: "npm:^2.0.22"
     vue: "npm:^3"
-  checksum: 10c0/9a6ee229712117e31651204d012926c8330e465b078dfc1681bf6004b6eaa86bb07111b316dbdfe9ddc2f42ccb3678ed3c8a3626f7c95d63307c6b710df44973
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@wwtelescope/engine-types@npm:>=0.6.0, @wwtelescope/engine-types@npm:>=0.6.3":
-  version: 0.9.0
-  resolution: "@wwtelescope/engine-types@npm:0.9.0"
-  checksum: 10c0/e1c34db65d137bc152559448afabc83d6ad860eae5feb976ddde87d6d4967b2e8e62eda0975e30061f1c6a3a911c0a847d2161aae0474e6b60a05050f4e39842
+"@wwtelescope/engine-types@portal:../../wwt-webgl-engine/engine-types::locator=root-workspace-0b6124%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@wwtelescope/engine-types@portal:../../wwt-webgl-engine/engine-types::locator=root-workspace-0b6124%40workspace%3A."
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@wwtelescope/engine@npm:^7.36.0, @wwtelescope/engine@npm:^7.39.0, @wwtelescope/engine@npm:^7.40.0":
-  version: 7.40.0
-  resolution: "@wwtelescope/engine@npm:7.40.0"
+"@wwtelescope/engine@portal:../../wwt-webgl-engine/engine::locator=root-workspace-0b6124%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@wwtelescope/engine@portal:../../wwt-webgl-engine/engine::locator=root-workspace-0b6124%40workspace%3A."
   dependencies:
-    "@wwtelescope/engine-types": "npm:>=0.6.0"
+    "@wwtelescope/engine-types": "workspace:0.0.0-dev.0"
     pako: "npm:^1.0.11"
     uuid: "npm:^14.0.0"
-  checksum: 10c0/ecc1924d91b05a05ce96e609ddaaa9f45055ddafd2fbb19485011a8d92fc41960ce4774ebb4d0f65507289065bf3c6a300d12cfb6a3da4836e80c4ad6dcd6983
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "abbrev@npm:^5.0.0":
   version: 5.0.0

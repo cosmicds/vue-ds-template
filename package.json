@@ -50,6 +50,11 @@
   "packageManager": "yarn@4.12.0",
   "resolutions": {
     "pinia": "^2.3.1",
-    "@cosmicds/vue-toolkit": "portal:../vue-toolkit"
+    "@cosmicds/vue-toolkit": "portal:../vue-toolkit",
+    "@wwtelescope/engine": "portal:../../wwt-webgl-engine/engine",
+    "@wwtelescope/engine-pinia": "portal:../../wwt-webgl-engine/engine-pinia",
+    "@wwtelescope/engine-types": "portal:../../wwt-webgl-engine/engine-types",
+    "@wwtelescope/engine-helpers": "portal:../../wwt-webgl-engine/engine-helpers",
+    "@wwtelescope/astro": "portal:../../wwt-webgl-engine/astro"
   }
 }
