@@ -27,6 +27,21 @@
         />
         <slot />
 
+        <div v-if="!props.hideButton">
+          <v-btn
+            class="splash-get-started"
+            color="secondary"
+            :density="(xs || isLandscape) ? 'compact' : 'default'"
+            :size="width < 250 ? 'large' : 'x-large'"
+            variant="elevated"
+            rounded="lg"
+            @click="closeSplashScreen"
+            @keyup.enter="closeSplashScreen"
+          >
+            {{ props.loaded ? 'Get Started' : 'Loading...' }}
+          </v-btn>
+        </div>
+
         <div id="splash-screen-acknowledgements">
           <div id="splash-screen-logos">
             <credit-logos
@@ -45,9 +60,13 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useDisplay } from 'vuetify';
 import { FocusTrap } from "focus-trap-vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { CreditLogos } from "@cosmicds/vue-toolkit";
+
+const { width, height, xs } = useDisplay();
+const isLandscape = computed(() => width.value > height.value * 1.25);
 
 const cfaExtraLogo = [{
   src: "./CfA_Logo_Vertical_Reverse.png",
@@ -62,6 +81,12 @@ export interface Props {
   color?: string,
   highlightColor?: string,
   loaded?: boolean,
+  /** an optional background image. this will go into a css url(<background>)
+   * If in public: ./background.jpg, if in src: @/assets/background.jpg
+   */
+  backgroundImage?: string,
+  /** hide the built-in "Get Started" button, e.g. when your own slot content has its own CTA */
+  hideButton?: boolean,
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -75,6 +100,8 @@ const cssVars = computed(() => {
   return {
     ...props.cssVars,
     '--accent-color': props.color,
+    '--background-image': props.backgroundImage ? `url("${props.backgroundImage}")` : 'none',
+    '--background-opacity': props.backgroundImage ? 1 : 0.5,
   };
 });
 
@@ -135,14 +162,21 @@ function closeSplashScreen() {
     position: fixed;
     inset: 0;
     background-color: black;
-    opacity: 0.5;
+    background-image: var(--background-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: var(--background-opacity);
+    // dims a background photo enough to keep text over it legible; has no
+    // visible effect on the plain black fallback
+    filter: brightness(0.7);
     contain: strict;
     z-index: -1;
     border-radius: var(--border-radius);
   }
 
   .background-blur {
-    backdrop-filter: blur(0px) saturate(2);
+    backdrop-filter: blur(6px) saturate(1);
     position: fixed;
     inset: 0;
     border-radius: var(--border-radius);
@@ -206,7 +240,7 @@ function closeSplashScreen() {
     }
   }
 
-  #splash-screen-text {
+  .splash-content {
     // in the grid, the text is in the 2nd column
     display: flex;
     flex-direction: column;
@@ -281,7 +315,7 @@ function closeSplashScreen() {
     // gap: calc(0.5 * var(--default-line-height));
     overflow: hidden;
 
-  #splash-screen-text {
+  .splash-content {
     line-height: 75%;
   }
 
