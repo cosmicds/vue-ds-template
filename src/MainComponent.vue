@@ -15,48 +15,25 @@
 
       <!-- This contains the splash screen content -->
 
-      <v-overlay
-        id="splash-overlay"
-        :model-value="showSplashScreen"
-        absolute
-        opacity="0.6"
-        :style="cssVars"
+      <SplashScreen
+        v-model="showSplashScreen"
+        :color="accentColor"
+        @close="closeSplashScreen"
       >
-        <div
-          id="splash-screen"
-          v-click-outside="closeSplashScreen"
-          :style="cssVars"
-        >
-          <font-awesome-icon
-            id="close-splash-button"
-            icon="xmark"
-            tabindex="0"
-            aria-hidden="false"
-            @click="closeSplashScreen"
-            @keyup.enter="closeSplashScreen"
-          />
-          <div id="splash-screen-text">
-            <p>Splash Screen Content</p>
-          </div>
-          <div id="splash-screen-acknowledgements" class="small">
-            This Data Story is brought to you by <a
-              href="https://www.cosmicds.cfa.harvard.edu/" target="_blank"
-              rel="noopener noreferrer"
-            >Cosmic Data Stories</a> and <a
-              href="https://www.worldwidetelescope.org/home/" target="_blank"
-              rel="noopener noreferrer"
-            >WorldWide Telescope</a>.
-          
-            <div id="splash-screen-logos">
-              <credit-logos
-                logo-size="5vmin"
-                :default-logos="['cosmicds', 'wwt', 'nasa']"
-                :extra-logos="extraLogos"
-              />
-            </div>
-          </div>
-        </div>
-      </v-overlay>
+        <p class="small text-center">
+          This Data Story is brought to you by
+          <a
+            href="https://www.cosmicds.cfa.harvard.edu/"
+            target="_blank"
+            rel="noopener"
+          >Cosmic Data Stories</a> and
+          <a
+            href="https://www.worldwidetelescope.org/home/"
+            target="_blank"
+            rel="noopener"
+          >WorldWide Telescope</a>.
+        </p>
+      </SplashScreen>
 
       <wwt-loader v-model="isLoading" />
 
@@ -266,6 +243,7 @@ import {
 } from "@cosmicds/vue-toolkit";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useDisplay } from "vuetify";
+import SplashScreen from "./components/SplashScreen.vue";
 import WwtLoader from "./components/Loader.vue";
 import WebglTest from "./components/WebGlTest.vue";
 
@@ -505,66 +483,6 @@ body {
   pointer-events: none;
   align-items: center;
   gap: 5px;
-}
-
-#splash-overlay {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-#splash-screen {
-  color: #FFFFFF;
-  background-color: #000000;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  align-content: center;
-  justify-content: space-around;
-
-  font-family: 'Highway Gothic Narrow', 'Roboto', sans-serif;
-  font-size: min(8vw, 7vh);
-
-  border-radius: 10%;
-  border: min(1.2vw, 0.9vh) solid var(--accent-color);
-  overflow: auto;
-  padding-top: 4rem;
-  padding-bottom: 1rem;
-
-  @media (max-width: 699px) {
-    max-height: 80vh;
-    max-width: 90vw;
-  }
-
-  @media (min-width: 700px) {
-    max-height: 85vh;
-    max-width: min(70vw, 800px);
-  }
-
-  div {
-    margin-inline: auto;
-    text-align: center;
-  }
-
-  .small {
-    font-size: var(--default-font-size);
-    font-weight: bold;
-  }
-
-  #close-splash-button {
-    position: absolute;
-    top: 0.5rem;
-    right: 1.75rem;
-    text-align: end;
-    color: var(--accent-color);
-    font-size: min(8vw, 5vh);
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
 }
 
 // From Sara Soueidan (https://www.sarasoueidan.com/blog/focus-indicators/) & Erik Kroes (https://www.erikkroes.nl/blog/the-universal-focus-state/)
