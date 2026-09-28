@@ -26,7 +26,7 @@ const update = (el: HTMLElement, binding: DirectiveBinding) => el.style.visibili
 createApp(MainComponent, {
   wwtNamespace: "vue-ds-template"
 })
- 
+
   // Plugins
   .use(wwtPinia as unknown as Plugin<[]>)
   .use(vuetify)

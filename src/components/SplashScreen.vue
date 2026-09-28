@@ -46,6 +46,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { FocusTrap } from "focus-trap-vue";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { CreditLogos } from "@cosmicds/vue-toolkit";
 
 const cfaExtraLogo = [{
