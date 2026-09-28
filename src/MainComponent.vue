@@ -39,76 +39,72 @@
       <wwt-loader v-model="isLoading" />
 
 
-      <!-- This block contains the elements (e.g. icon buttons displayed at/near the top of the screen -->
+      <!-- This block contains the elements (e.g. icon buttons displayed at/near the top of the screen) -->
 
-      <div id="top-content">
-        <div id="left-buttons">
-          <icon-button
-            v-model="showTextSheet"
-            icon="book-open"
-            :ariaLabel="showTextSheet ? 'Hide Info' : 'Learn More'"
-            :color="buttonColor"
-            :tooltip-text="showTextSheet ? 'Hide Info' : 'Learn More'"
-            tooltip-location="start"
-          >
-          </icon-button>
-          <icon-button
-            v-model="showVideoSheet"
-            icon="video"
-            ariaLabel="Watch video"
-            :color="buttonColor"
-            tooltip-text="Watch video"
-            tooltip-location="start"
-          >
-          </icon-button>
+      <div
+        v-show="!showSplashScreen"
+        id="wwt-overlay"
+      >
+        <div id="top-content">
+          <div id="left-buttons">
+            <icon-button
+              v-model="showTextSheet"
+              icon="book-open"
+              :ariaLabel="showTextSheet ? 'Hide Info' : 'Learn More'"
+              :color="accentColor"
+              :tooltip-text="showTextSheet ? 'Hide Info' : 'Learn More'"
+              tooltip-location="start"
+            >
+            </icon-button>
+            <icon-button
+              v-model="showVideo"
+              icon="video"
+              ariaLabel="Watch video"
+              :color="accentColor"
+              tooltip-text="Watch video"
+              tooltip-location="start"
+            >
+            </icon-button>
+            <icon-button
+              v-model="showShort"
+              icon="mdi-youtube"
+              ariaLabel="Watch short"
+              :color="accentColor"
+              tooltip-text="Watch short"
+              tooltip-location="start"
+            >
+            </icon-button>
+          </div>
+          <div id="center-buttons">
+          </div>
+          <div id="right-buttons">
+          </div>
         </div>
-        <div id="center-buttons">
-        </div>
-        <div id="right-buttons">
-        </div>
-      </div>
 
-
-      <!-- This block contains the elements (e.g. the project icons) displayed along the bottom of the screen -->
-
-      <div id="bottom-content">
-        <div v-if="!smallSize" id="body-logos">
-          <credit-logos
-            :default-logos="['cosmicds', 'wwt', 'nasa']"
-            :extra-logos="extraLogos"
-          />
+        <div id="bottom-content">
+          <div v-if="!smallSize" id="body-logos">
+            <credit-logos
+              :default-logos="['cosmicds', 'wwt', 'nasa']"
+              :extra-logos="extraLogos"
+            />
+          </div>
         </div>
       </div>
 
 
       <!-- This dialog contains the video that is displayed when the video icon is clicked -->
 
-      <v-dialog
-        id="video-container"
-        v-model="showVideoSheet"
-        transition="slide-y-transition"
-        fullscreen
-      >
-        <div class="video-wrapper">
-          <font-awesome-icon
-            id="video-close-icon"
-            class="close-icon"
-            icon="times"
-            size="lg"
-            tabindex="0"
-            @click="showVideoSheet = false"
-            @keyup.enter="showVideoSheet = false"
-          ></font-awesome-icon>
-          <video
-            id="info-video"
-            controls
-          >
-            <source src="" type="video/mp4">
-          </video>
-        </div>
-      </v-dialog>
+      <VideoWrapper
+        v-model="showVideo"
+        src="./test-video-vertical.mp4"
+      />
 
+      <!-- This dialog contains the YouTube short that is displayed when the YouTube icon is clicked -->
 
+      <VideoWrapper
+        v-model="showShort"
+        src="https://youtube.com/shorts/-4kALiBHA5Y?si=Cse3ujkEkx49B3al"
+      />
     </div>
 
 
@@ -157,19 +153,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, nextTick } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
+import type { StyleValue } from "vue";
 import { WWTControl } from "@wwtelescope/engine";
 import { GotoRADecZoomParams, WWTComponent as WorldWideTelescope, engineStore } from "@wwtelescope/engine-pinia";
 import {
   BackgroundImageset,
   skyBackgroundImagesets,
-  blurActiveElement,
   useWWTKeyboardControls,
   IconButton,
   CreditLogos,
 } from "@cosmicds/vue-toolkit";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import SplashScreen from "./components/SplashScreen.vue";
+import VideoWrapper from "./components/VideoWrapper.vue";
 import WwtLoader from "./components/Loader.vue";
 import WebglTest from "./components/WebGlTest.vue";
 import InformationSheet from "./components/InformationSheet.vue";
@@ -184,7 +180,6 @@ const extraLogos = [{
   name: "cfa",
 }];
 
-type SheetType = "text" | "video";
 type CameraParams = Omit<GotoRADecZoomParams, "instant">;
 export interface MainComponentProps {
   wwtNamespace?: string;
@@ -211,13 +206,19 @@ const props = withDefaults(defineProps<MainComponentProps>(), {
 const splash = new URLSearchParams(window.location.search).get("splash")?.toLowerCase() !== "false";
 const showSplashScreen = ref(splash);
 const backgroundImagesets = reactive<BackgroundImageset[]>([]);
-const sheet = ref<SheetType | null>(null);
-const layersLoaded = ref(false);
-const positionSet = ref(false);
-const accentColor = ref("#ffffff");
-const buttonColor = ref("#ffffff");
+
+const showVideo = ref(false);
+const showShort = ref(false);
 
 const showWebGL2Warning = ref(false);
+
+import {useTheme} from "vuetify";
+const theme = useTheme();
+// in the past we have used accentColor and accentColor2, but these serve the same purpose
+// as vuetify's primary and secondary colors, so we tie them to that. vuetify components
+// can access them directly as `color="primary" on the prop, and they are aleady available in the CSS as --v-theme-primary and --v-theme-secondary
+const accentColor = computed(() => theme.current.value.colors.primary);
+const accentColor2 = computed(() => theme.current.value.colors.secondary);
 
 onMounted(() => {
   if (showWebGL2Warning.value) {
@@ -239,16 +240,23 @@ onMounted(() => {
   });
 });
 
+const layersLoaded = ref(false);
+const positionSet = ref(false);
 const ready = computed(() => layersLoaded.value && positionSet.value);
 
 /* `isLoading` is a bit redundant here, but it could potentially have independent logic */
 const isLoading = computed(() => !ready.value);
 
+// we do not need to add the accent colors anymore since they are availabe via the css theme
+// but we use this to demonstrate the pattern.
 /* This lets us inject component data into element CSS */
 const cssVars = computed(() => {
   return {
-    "--accent-color": accentColor.value,
-  };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ["--accent-color" as any]: accentColor.value,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ["--accent-color-2" as any]: accentColor2.value
+  } as StyleValue;
 });
 
 
@@ -267,36 +275,12 @@ function openInfoSheetTab(tabValue: string) {
   showTextSheet.value = true;
 }
 
-const showVideoSheet = computed({
-  get() {
-    return sheet.value === "video";
-  },
-  set(value: boolean) {
-    selectSheet("video");
-    if (!value) {
-      const video = document.querySelector("#info-video") as HTMLVideoElement;
-      video.pause();
-    }
-  }
-});
-
 /**
   This is convenient if there's any other logic that we want to run
   when the splash screen is closed
 */
 function closeSplashScreen() {
   showSplashScreen.value = false;
-}
-
-function selectSheet(sheetType: SheetType | null) {
-  if (sheet.value === sheetType) {
-    sheet.value = null;
-    nextTick(() => {
-      blurActiveElement();
-    });
-  } else {
-    sheet.value = sheetType;
-  }
 }
 </script>
 
@@ -345,27 +329,51 @@ body {
   height: 100%;
   margin: 0;
   overflow: hidden;
+  overscroll-behavior: none;
   font-size: 11pt;
+}
 
-  .wwtelescope-component {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    border-style: none;
-    border-width: 0;
-    margin: 0;
-    padding: 0;
-  }
+
+// WWT fills #main-content, which gets its size from the flex layout above.
+// This breaks if #main-content stops having a definite size from layout.
+.wwtelescope-component {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.wwtelescope-component > canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+// #wwt-overlay is positioned against #main-content, not the viewport
+#wwt-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  padding: 1rem;
+  pointer-events: none;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; // pushes top and bottom content apart
+}
+
+#wwt-overlay > * {
+  // turns #wwt-overlay into a stacking context
+  isolation: isolate;
 }
 
 
 #top-content {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  width: calc(100% - 2rem);
-  pointer-events: none;
+  width: 100%;
+  pointer-events: auto;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -375,6 +383,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  pointer-events: auto;
 }
 
 #right-buttons {
@@ -383,70 +392,23 @@ body {
   gap: 10px;
   align-items: flex-end;
   height: auto;
+  pointer-events: auto;
 }
 
 #bottom-content {
   display: flex;
   flex-direction: column;
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  width: calc(100% - 2rem);
+  width: 100%;
   pointer-events: none;
   align-items: center;
   gap: 5px;
 }
 
-// From Sara Soueidan (https://www.sarasoueidan.com/blog/focus-indicators/) & Erik Kroes (https://www.erikkroes.nl/blog/the-universal-focus-state/)
-:focus-visible,
-button:focus-visible,
-.focus-visible,
-.v-selection-control--focus-visible .v-selection-control__input {
-  outline: 9px double white !important;
-  box-shadow: 0 0 0 6px black !important;
+// based on Sara Soueidan (https://www.sarasoueidan.com/blog/focus-indicators/) & Erik Kroes (https://www.erikkroes.nl/blog/the-universal-focus-state/)
+:focus-visible:not(.v-btn):not(.v-field):not(.v-input) {
+  outline: 4px double white;
+  box-shadow: 0 0 0 2px black;
   border-radius: .125rem;
-}
-
-.video-wrapper {
-  height: 100%;
-  background: black;
-  text-align: center;
-  z-index: 1000;
-
-  #video-close-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 15;
-    
-    &:hover {
-      cursor: pointer;
-    }
-
-    &:focus {
-      color: white;
-      border: 2px solid white;
-    }
-  }
-}
-
-video {
-  height: 100%;
-  width: auto;
-  max-width: 100%;
-  object-fit: contain;
-}
-
-#info-video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  padding: 0px;
-  z-index: 10;
 }
 
 /** ====== Define our standard Side/Bottom panel layout
@@ -476,6 +438,7 @@ The default DOM structure is basically
 
 // side-panel layout: #side-drawer follows #main-content in the DOM,
 // so flipping the order is what puts the panel on the left of the view
+// order sets the order of the children of a flex container
 #app.app-side-panel {
   #main-content {
     order: 1; // on the right
