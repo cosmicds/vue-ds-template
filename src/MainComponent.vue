@@ -56,18 +56,7 @@
         </div>
       </v-overlay>
 
-      <transition name="fade">
-        <div
-          v-show="isLoading"
-          id="modal-loading"
-          class="modal"
-        >
-          <div class="container">
-            <div class="spinner"></div>
-            <p>Loading …</p>
-          </div>
-        </div>
-      </transition>
+      <wwt-loader v-model="isLoading" />
 
 
       <!-- This block contains the elements (e.g. icon buttons displayed at/near the top of the screen -->
@@ -274,6 +263,7 @@ import {
 } from "@cosmicds/vue-toolkit";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useDisplay } from "vuetify";
+import WwtLoader from "./components/Loader.vue";
 
 const extraLogos = [{
   src: "./CfA_Logo_Vertical_Reverse.png",
@@ -466,51 +456,6 @@ body {
   }
 }
 
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.modal {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  z-index: 100;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#modal-loading {
-  background-color: #000;
-  .container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    .spinner {
-      background-image: url("https://projects.cosmicds.cfa.harvard.edu/cds-website/misc/lunar_loader.gif");
-      background-repeat: no-repeat;
-      background-size: contain;
-      width: 3rem;
-      height: 3rem;
-    }
-    p {
-      margin: 0 0 0 1rem;
-      padding: 0;
-      font-size: 150%;
-    }
-  }
-}
 
 #top-content {
   position: absolute;
