@@ -52,7 +52,7 @@ onUnmounted(() => {
 
 
 <!-- we also make sure they are "scoped" by specifying them as children of cds-info-sheet belonging in the cds-info-sheet  -->
-<style lang="less">
+<style scoped lang="less">
 // v-card
 .cds-info-sheet .info-page {
   display: block;
@@ -72,9 +72,6 @@ onUnmounted(() => {
 .cds-info-sheet .info-text {
   flex: 1 1 auto;
   line-height: 1.425;
-  letter-spacing: 0.0178571429em;
-  font-size: ~"max(13px, calc(0.6em + 0.3vw))";
-  // padding: ~"max(2vw, 16px)" 16px 1rem;
 
   // takes the place of .scrollable
   overflow-y: visible;

@@ -2,6 +2,7 @@
   <v-app
     id="app"
     :style="cssVars"
+    :class="[smallSize ? 'app-is-small' : '', sidePanel ? 'app-side-panel' : '']"
   >
     <webgl-test @webgl2-disabled="showWebGL2Warning = true" />
 
@@ -108,121 +109,49 @@
       </v-dialog>
 
 
-      <!-- This dialog contains the informational content that is displayed when the book icon is clicked -->
+    </div>
 
-      <v-dialog
-        id="text-info-sheet"
+
+    <!--
+    This contains the informational content that is displayed when the book icon is clicked.
+    It's an in-flow flex sibling of #main-content, so opening it shrinks the WWT view
+    (from the side normally, from the bottom on small screens) instead of covering it.
+  -->
+
+    <div
+      v-show="!showSplashScreen"
+      id="side-drawer"
+      :class="[sidePanel ? 'info-side' : 'info-bottom', showTextSheet ? 'side-drawer-open' : 'side-drawer-closed']"
+    >
+      <!--
+        The Information Sheet and InfoPage are vue "tightly coupled" components
+        This means an InfoPage can only be used within an InformationSheet.
+        The info-page automatically registers itself as a tab in the information sheet, and unregisters itself when it is destroyed.
+
+        v-model:tab is the name of the currently selected tab. It comes from the title in kebab-case or the value if specified
+        Each tab must havea unique value. If the sheet is closed and you want to show a specific tab, you must set
+        the showTextSheet to true and set the infoSheetTab to the value of the tab you want to show.
+      -->
+      <information-sheet
         v-model="showTextSheet"
-        :style="cssVars"
-        :class="['info-sheet', `info-sheet-${infoSheetLocation}`]"
-        :scrim="false"
-        persistent
-        no-click-animation
-        absolute
-        location="bottom"
-        :transition="infoSheetTransition"
+        v-model:tab="infoSheetTab"
+        :tab-color="accentColor"
+        :slider-color="accentColor"
+        :accent-color="accentColor"
+        closable
+        align-tabs="start"
       >
-        <v-card height="100%">
-          <v-tabs
-            id="tabs"
-            v-model="tab"
-            height="32px"
-            :color="accentColor"
-            :slider-color="accentColor"
-            dense
-          >
-            <v-tab class="info-tabs" tabindex="0"><h3>Information</h3></v-tab>
-            <v-tab class="info-tabs" tabindex="0"><h3>Using WWT</h3></v-tab>
-          </v-tabs>
-          <font-awesome-icon
-            id="close-text-icon"
-            class="control-icon"
-            icon="times"
-            size="lg"
-            tabindex="0"
-            @click="showTextSheet = false"
-            @keyup.enter="showTextSheet = false"
-          ></font-awesome-icon>
-          <v-window
-            id="tab-items" v-model="tab"
-            class="pb-2 no-bottom-border-radius"
-          >
-            <v-window-item>
-              <v-card class="no-bottom-border-radius scrollable">
-                <v-card-text class="info-text no-bottom-border-radius">
-                  Information goes here
-                  <v-spacer class="end-spacer"></v-spacer>
-                </v-card-text>
-              </v-card>
-            </v-window-item>
-            <v-window-item>
-              <v-card class="no-bottom-border-radius scrollable">
-                <v-card-text class="info-text no-bottom-border-radius">
-                  <v-container>
-                    <v-row align="center">
-                      <v-col cols="4">
-                        <v-chip
-                          label
-                          variant="outlined"
-                        >
-                          Pan
-                        </v-chip>
-                      </v-col>
-                      <v-col cols="8" class="pt-1">
-                        <strong>{{ touchscreen ? "press + drag" : "click + drag" }}</strong>  {{ touchscreen ? ":" : "or" }}  <strong>{{ touchscreen ? ":" : "W-A-S-D" }}</strong> {{ touchscreen ? ":" : "keys" }}<br>
-                      </v-col>
-                    </v-row>
-                    <v-row align="center">
-                      <v-col cols="4">
-                        <v-chip
-                          label
-                          variant="outlined"
-                        >
-                          Zoom
-                        </v-chip>
-                      </v-col>
-                      <v-col cols="8" class="pt-1">
-                        <strong>{{ touchscreen ? "pinch in and out" : "scroll in and out" }}</strong> {{ touchscreen ? ":" : "or" }} <strong>{{ touchscreen ? ":" : "I-O" }}</strong> {{ touchscreen ? ":" : "keys" }}<br>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col cols="12">
-                        <div class="credits">
-                          <h3>Credits:</h3>
-                          <h4><a
-                            href="https://www.cosmicds.cfa.harvard.edu/" target="_blank"
-                            rel="noopener noreferrer"
-                          >CosmicDS</a> Vue Data Stories Team:</h4>
-                          John Lewis<br>
-                          Jon Carifio<br>
-                          Pat Udomprasert<br>
-                          Alyssa Goodman<br>
-                          Mary Dussault<br>
-                          Harry Houghton<br>
-                          Anna Nolin<br>
-                          Evaluator: Sue Sunbury<br>
-                          <br>
-                          <h4>WorldWide Telescope Team:</h4>
-                          Peter Williams<br>
-                          A. David Weigel<br>
-                          Jon Carifio<br>
-                        </div>
-                        <v-spacer class="end-spacer"></v-spacer>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col>
-                        <funding-acknowledgement />
-                      </v-col>
-                    </v-row>
-                  </v-container>              
-                </v-card-text>
-              </v-card>
-            </v-window-item>
-          </v-window>
-        </v-card>
-      </v-dialog>
+        <!-- info-page content is wrapped in a .info-page class  -->
+        <info-page title="Information">
+          <!-- we generally use heading level 3 (the same level as the tabs) -->
+          <h3>Science Information</h3>
+          <p>
+            Learn some cool science facts
+          </p>
+        </info-page>
 
+        <user-guide />
+      </information-sheet>
     </div>
   </v-app>
 </template>
@@ -234,18 +163,19 @@ import { GotoRADecZoomParams, WWTComponent as WorldWideTelescope, engineStore } 
 import {
   BackgroundImageset,
   skyBackgroundImagesets,
-  supportsTouchscreen,
   blurActiveElement,
   useWWTKeyboardControls,
   IconButton,
   CreditLogos,
-  FundingAcknowledgement
 } from "@cosmicds/vue-toolkit";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { useDisplay } from "vuetify";
 import SplashScreen from "./components/SplashScreen.vue";
 import WwtLoader from "./components/Loader.vue";
 import WebglTest from "./components/WebGlTest.vue";
+import InformationSheet from "./components/InformationSheet.vue";
+import InfoPage from "./components/InfoPage.vue";
+import UserGuide from "./components/UserGuide.vue";
+import { useAppLayout } from "./composables/useAppLayout";
 
 const extraLogos = [{
   src: "./CfA_Logo_Vertical_Reverse.png",
@@ -265,8 +195,7 @@ const store = engineStore();
 
 useWWTKeyboardControls(store);
 
-const touchscreen = supportsTouchscreen();
-const { smAndDown } = useDisplay();
+const { smallSize, sidePanel } = useAppLayout();
 
 const props = withDefaults(defineProps<MainComponentProps>(), {
   wwtNamespace: "vue-ds-template",
@@ -287,7 +216,6 @@ const layersLoaded = ref(false);
 const positionSet = ref(false);
 const accentColor = ref("#ffffff");
 const buttonColor = ref("#ffffff");
-const tab = ref(0);
 
 const showWebGL2Warning = ref(false);
 
@@ -316,28 +244,10 @@ const ready = computed(() => layersLoaded.value && positionSet.value);
 /* `isLoading` is a bit redundant here, but it could potentially have independent logic */
 const isLoading = computed(() => !ready.value);
 
-/* Properties related to device/screen characteristics */
-const smallSize = computed(() => smAndDown.value);
-
-/** Values related to setting the info sheet size and position */
-const infoFraction = 34;
-const tall = computed(() => smAndDown.value);
-const widescreenInfoLocation = ref<"right" | "bottom">("right");
-const infoSheetLocation = computed(() => tall.value || widescreenInfoLocation.value === "bottom" ? "bottom" : "right");
-const infoSheetHeight = computed(() => infoSheetLocation.value === "bottom" ? `${infoFraction}%` : "100%");
-const infoSheetWidth = computed(() => infoSheetLocation.value === "bottom" ? "100%" : `${infoFraction}%`);
-const infoTextHeight = computed(() => infoSheetLocation.value === "bottom" ? `calc(${infoFraction}vh - 25px)` : "calc(100vh - 25px)");
-const infoSheetTransition = computed(() => infoSheetLocation.value === "bottom" ? "dialog-bottom-transition" : "tab-reverse-transition");
-
 /* This lets us inject component data into element CSS */
 const cssVars = computed(() => {
   return {
     "--accent-color": accentColor.value,
-    "--app-content-height": showTextSheet.value && infoSheetLocation.value === "bottom" ? `${100 - infoFraction}%` : "100%",
-    "--app-content-width": showTextSheet.value && infoSheetLocation.value === "right" ? `${100 - infoFraction}%` : "100%",
-    "--info-sheet-width": infoSheetWidth.value,
-    "--info-sheet-height": infoSheetHeight.value,
-    "--info-text-height": infoTextHeight.value,
   };
 });
 
@@ -348,14 +258,14 @@ const cssVars = computed(() => {
   computed wrappers around modifying/querying that which can be used as
   dialog v-model values
 */
-const showTextSheet = computed({
-  get() {
-    return sheet.value === "text";
-  },
-  set(_value: boolean) {
-    selectSheet("text");
-  }
-});
+const showTextSheet = ref(false);
+const infoSheetTab = ref("");
+/** open a tab on the info sheet */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function openInfoSheetTab(tabValue: string) {
+  infoSheetTab.value = tabValue;
+  showTextSheet.value = true;
+}
 
 const showVideoSheet = computed({
   get() {
@@ -420,12 +330,14 @@ body {
 }
 
 #main-content {
-  position: fixed;
-  width: var(--app-content-width);
-  height: var(--app-content-height);
+  // containing block for the absolutely positioned WWT host and overlay
+  position: relative;
+  display: block;
+  // shrinkable with no min-size floor, so an open drawer takes its share of the space
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
   overflow: hidden;
-
-  transition: height 0.1s ease-in-out;
 }
 
 #app {
@@ -537,92 +449,77 @@ video {
   z-index: 10;
 }
 
-.info-sheet {
-  .v-overlay__content {
-    align-self: flex-end;
-    padding: 0;
-    margin: 0 !important;
-    max-width: 100% !important;
-    height: var(--info-sheet-height) !important;
-    width: var(--info-sheet-width) !important;
+/** ====== Define our standard Side/Bottom panel layout
+The default DOM structure is basically
+<div #app>
+  <div .v-application__wrap>
+    <div #main-content>
+      <WorldWideTelescope />
+      <div #wwt-overlay />
+    </div>
+    <div #side-drawer />
+  </div>
+</div>
+======== */
+
+// Default is the column/bottom-panel layout; a side panel opts in with .app-side-panel
+#app > .v-application__wrap {
+  // default, but specify anyway
+  flex-direction: column;
+  max-height: 100svh;
+}
+
+#app.app-side-panel > .v-application__wrap {
+  flex-direction: row;
+}
+
+
+// side-panel layout: #side-drawer follows #main-content in the DOM,
+// so flipping the order is what puts the panel on the left of the view
+#app.app-side-panel {
+  #main-content {
+    order: 1; // on the right
   }
 
-  &.info-sheet-right .v-overlay__content {
-    position: absolute;
-    top: 0;
-    right: 0;
-    max-height: 100%;
+  #side-drawer {
+    order: 0; // on the left
+  }
+}
 
-    & .v-card, & .v-card .v-window {
-      height: 100%;
-    }
-    
-    & .info-tabs h3 {
-      font-size: 10pt;
-    }
-  }
+// in-flow flex sibling of #main-content, so opening it shrinks the WWT view
+// instead of covering it. Default is the bottom panel: full width, growing in height.
+#side-drawer {
+  flex: 0 0 auto;
+  overflow: hidden;
+  width: 100%;
+  height: 0;
+  border-radius: 5px 5px 0 0;
 
-  #tabs {
-    width: calc(100% - 3em);
-    align-self: left;
+  &.side-drawer-open {
+    height: 34%;
   }
+}
 
-  .info-text {
-    height: var(--info-text-height);
-    padding-bottom: 25px;
-  
-    & a {
-      text-decoration: none;
-    }
-  }
-  
-  .close-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 15;
-  
-    &:hover {
-      cursor: pointer;
-    }
-  
-    &:focus {
-      color: white;
-      border: 2px solid white;
-    }
-  }
-  
-  .scrollable {
-    overflow-y: auto;
-  }
-  
-  #tab-items {
-    // padding-bottom: 2px !important;
-  
-    .v-card-text {
-      font-size: ~"max(14px, calc(0.7em + 0.3vw))";
-      padding-top: ~"max(2vw, 16px)";
-      padding-left: ~"max(4vw, 16px)";
-      padding-right: ~"max(4vw, 16px)";
-  
-      .end-spacer {
-        height: 25px;
-      }
-    }
-  
-  }
-  
-  #close-text-icon {
-    position: absolute;
-    top: 0.25em;
-    right: calc((3em - 0.6875em) / 3); // font-awesome-icons have width 0.6875em
-    color: white;
-  }
+// side panel: full height, growing in width
+.app-side-panel #side-drawer {
+  width: 0;
+  height: 100%;
+  border-radius: 0 5px 5px 0;
 
-  // This prevents the tabs from having some extra space to the left when the screen is small
-  // (around 400px or less)
-  .v-tabs:not(.v-tabs--vertical).v-tabs--right>.v-slide-group--is-overflowing.v-tabs-bar--is-mobile:not(.v-slide-group--has-affixes) .v-slide-group__next, .v-tabs:not(.v-tabs--vertical):not(.v-tabs--right)>.v-slide-group--is-overflowing.v-tabs-bar--is-mobile:not(.v-slide-group--has-affixes) .v-slide-group__prev {
-    display: none;
+  &.side-drawer-open {
+    width: 34%;
+  }
+}
+
+.info-text {
+  padding: 1rem;
+}
+
+// Basic text styling for the InformationSheet's content - simpler to set
+// here globally than to thread a heading-color prop through.
+.cds-info-sheet .info-text {
+  h3, h4, h5 {
+    color: steelblue;
   }
 }
 </style>
