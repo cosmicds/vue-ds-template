@@ -3,6 +3,8 @@
     id="app"
     :style="cssVars"
   >
+    <webgl-test @webgl2-disabled="showWebGL2Warning = true" />
+
     <div
       id="main-content"
     >
@@ -250,6 +252,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, nextTick } from "vue";
+import { WWTControl } from "@wwtelescope/engine";
 import { GotoRADecZoomParams, WWTComponent as WorldWideTelescope, engineStore } from "@wwtelescope/engine-pinia";
 import {
   BackgroundImageset,
@@ -264,6 +267,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useDisplay } from "vuetify";
 import WwtLoader from "./components/Loader.vue";
+import WebglTest from "./components/WebGlTest.vue";
 
 const extraLogos = [{
   src: "./CfA_Logo_Vertical_Reverse.png",
@@ -307,7 +311,16 @@ const accentColor = ref("#ffffff");
 const buttonColor = ref("#ffffff");
 const tab = ref(0);
 
+const showWebGL2Warning = ref(false);
+
 onMounted(() => {
+  if (showWebGL2Warning.value) {
+    showSplashScreen.value = false;
+    WWTControl.singleton.canvas.setAttribute("hidden", "true");
+    WWTControl.singleton.renderOneFrame = function() {};
+    return;
+  }
+
   store.waitForReady().then(async () => {
     skyBackgroundImagesets.forEach(iset => backgroundImagesets.push(iset));
     store.gotoRADecZoom({

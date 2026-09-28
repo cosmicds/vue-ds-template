@@ -3,5 +3,8 @@ import "@wwtelescope/engine";  // we include top-level import so that it merges 
 declare module "@wwtelescope/engine" {
 
   // Typescript will merge this with the existing WWTControl interface
+  interface WWTControl {
+    canvas: HTMLCanvasElement;
+  }
 
 }
