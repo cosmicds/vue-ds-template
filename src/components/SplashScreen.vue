@@ -189,7 +189,7 @@ function closeSplashScreen() {
   .background {
     position: fixed;
     inset: 0;
-    background-color: white;
+    background-color: black;
     background-image: var(--background-image);
     background-size: cover;
     background-position: center;
