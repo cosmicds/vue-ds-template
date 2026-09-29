@@ -225,10 +225,6 @@ function closeSplashScreen() {
 
 
   border-radius: var(--border-radius);
-  // min(1.2vw, 0.9vh) got too think with the viewport
-  // this clamps it and keeps it balanced in both dimensions
-  --border-max: 6px;
-  --border-min: 2px;
   border: var(--border-thickness) solid var(--accent-color);
   overflow: auto;
   font-family: 'Highway Gothic Narrow', 'Roboto', sans-serif;
@@ -308,7 +304,7 @@ function closeSplashScreen() {
 
   .splash-acknowledgements {
     font-size: var(--fs-0);
-    line-height: clamp(1rem, 2.2min, 1.6rem);
+    line-height: clamp(1rem, 2.2vmin, 1.6rem);
   }
 
   // the logo row can't wrap (#icons-container below is nowrap), so on a
