@@ -1,6 +1,6 @@
 <template>
   <v-overlay
-    id="splash-overlay"
+    class="splash-overlay"
     :model-value="showSplashScreen"
     :scrim="false"
 
@@ -13,12 +13,13 @@
         id="splash-screen"
         v-click-outside="closeSplashScreen"
         :style="cssVars"
+        :class="{ 'is-fullscreen': props.fullscreenOnSmall }"
       >
         <div class="background">
           <div class="background-blur"></div>
         </div>
         <font-awesome-icon
-          id="close-splash-button"
+          class="splash-close-button"
           icon="xmark"
           tabindex="0"
           aria-hidden="false"
@@ -27,12 +28,13 @@
         />
         <slot />
 
-        <div v-if="!props.hideButton">
+        <div
+          v-if="!props.hideButton"
+          class="splash-cta"
+        >
           <v-btn
             class="splash-get-started"
             color="secondary"
-            :density="(xs || isLandscape) ? 'compact' : 'default'"
-            :size="width < 250 ? 'large' : 'x-large'"
             variant="elevated"
             rounded="lg"
             @click="closeSplashScreen"
@@ -42,11 +44,26 @@
           </v-btn>
         </div>
 
-        <div id="splash-screen-acknowledgements">
-          <div id="splash-screen-logos">
+        <div class="splash-acknowledgements">
+          <slot name="credits">
+            <p class="splash-credits text-center">
+              This Data Story is brought to you by
+              <a
+                href="https://www.cosmicds.cfa.harvard.edu/"
+                target="_blank"
+                rel="noopener"
+              >Cosmic Data Stories</a> and
+              <a
+                href="https://www.worldwidetelescope.org/home/"
+                target="_blank"
+                rel="noopener"
+              >WorldWide Telescope</a>.
+            </p>
+          </slot>
+          <div class="splash-logos">
             <credit-logos
-              id="splash-screen-credit-logos"
-              logo-size="clamp(36px, 5vmin, 65px)"
+              class="splash-credit-logos"
+              logo-size="clamp(22px, 4vmin, 60px)"
               :default-logos="['cosmicds', 'wwt', 'nasa']"
               :extra-logos="cfaExtraLogo"
             />
@@ -60,13 +77,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useDisplay } from 'vuetify';
 import { FocusTrap } from "focus-trap-vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { CreditLogos } from "@cosmicds/vue-toolkit";
-
-const { width, height, xs } = useDisplay();
-const isLandscape = computed(() => width.value > height.value * 1.25);
 
 const cfaExtraLogo = [{
   src: "./CfA_Logo_Vertical_Reverse.png",
@@ -77,7 +90,7 @@ const cfaExtraLogo = [{
 
 export interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  cssVars?: any;
+  cssVars?: Record<string, any>,
   color?: string,
   highlightColor?: string,
   loaded?: boolean,
@@ -87,6 +100,9 @@ export interface Props {
   backgroundImage?: string,
   /** hide the built-in "Get Started" button, e.g. when your own slot content has its own CTA */
   hideButton?: boolean,
+  /** on a small screen ( < 310px wide), cover the
+   * whole viewport instead of floating as a bordered card */
+  fullscreenOnSmall?: boolean,
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -130,15 +146,26 @@ function closeSplashScreen() {
 
 <style lang="less">
 
-#splash-overlay {
+.splash-overlay {
   align-items: center;
   justify-content: center;
-  font-size: min(8vw, 5vh);
+  // the 5vh version of this shrank everything too aggressively on a wide
+  // but short window (e.g. a laptop with a small browser height) - vh was
+  // the limiting term there even though there was plenty of width to spare.
+  // fluid type/spacing 
+  // https://piccalil.li/blog/fluid-typography-with-css-clamp/,
+  // https://www.kevinpowell.co/article/typographic-scale/. also see Scott
+  --scale: 1.3333; // perfect fourth
+  --fs-0: min(9vw, 6vh); // title / lead-in - .splash-overlay's font-size, inherited
+  --fs-1: calc(var(--fs-0) / var(--scale)); // description
+  --fs-2: calc(var(--fs-1) / var(--scale)); // button label
+  --fs-3: calc(var(--fs-2) / var(--scale)); // credits line
+  font-size: var(--fs-0);
   transition: width 0.5s, height 0.5s;
 }
 
-:deep(.v-fade-transition-enter-active),
-:deep(.v-fade-transition-leave-active) {
+.v-fade-transition-enter-active,
+.v-fade-transition-leave-active {
   transition-duration: 6000ms !important;
 }
 
@@ -147,15 +174,11 @@ function closeSplashScreen() {
   user-select: none;
   contain: paint;
 
-  @media (max-width: 699px) {
-    max-height: 80vh;
-    max-width: 90vw;
-  }
-
-  @media (min-width: 700px) {
-    max-height: 85vh;
-    max-width: min(70vw, 800px);
-  }
+  // one continuous curve from phone to desktop instead of a breakpoint jump -
+  // grows with the viewport, floored so it's never cramped, capped so it
+  // never sprawls on a big monitor
+  max-width: clamp(280px, 90vw, 640px);
+  max-height: clamp(320px, 85vh, 700px);
   --border-radius: 30px;
 
   .background {
@@ -184,16 +207,24 @@ function closeSplashScreen() {
 
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   align-content: center;
+  gap: 0.4em;
   padding-top: 1rem;
   padding-bottom: 1rem;
-  padding-inline: 2rem;
+  // shrinks toward 8px on a narrow phone instead of staying a flat 2rem -
+  --panel-padding-inline: clamp(8px, 2vw, 2rem);
+  padding-inline: var(--panel-padding-inline);
+
 
   border-radius: var(--border-radius);
-  border: min(1.2vw, 0.9vh) solid var(--accent-color);
+  // min(1.2vw, 0.9vh) got too think with the viewport
+  // this clamps it and keeps it balanced in both dimensions
+  --border-max: 6px;
+  --border-min: 2px;
+  border: clamp(var(--border-min), 0.4vmax, var(--border-max)) solid var(--accent-color);
   overflow: auto;
-  font-family: 'Source Sans 3', 'Roboto', sans-serif;
+  font-family: 'Highway Gothic Narrow', 'Roboto', sans-serif;
 
   div {
     margin-inline: auto;
@@ -205,28 +236,42 @@ function closeSplashScreen() {
   }
   // make a paragraph inside the div centered horizontally and vertically
   p {
-    font-family: 'Source Sans 3', 'Roboto', sans-serif;
-    font-weight: regular;
+    font-family: 'Highway Gothic Narrow', 'Roboto', sans-serif;
     vertical-align: middle;
+
+    font-size: var(--fs-1);
+    font-weight: 400;
+    line-height: 1.4;
+  }
+  
+  // lead-in above the title, e.g. "Explore" before "THE NIGHT SKY" - same
+  // size as the title, differs only by weight
+  .splash-lead {
+    font-size: var(--fs-0);
+    line-height: inherit;
+    font-weight: 400;
   }
 
-  p.highlight {
+  // allow us to also highlight a <p> or a <span>
+  .highlight {
+    font-size: var(--fs-0);
+    line-height: inherit;
     color: var(--accent-color);
     text-transform: uppercase;
     font-weight: bold;
   }
 
 
-  p.small {
-    font-size: 0.8em;
+
+  // "brought to you by..." - placed above the logos, matching the fleet.
+  // named splash-credits, not "small" - this file is unscoped
+  .splash-credits {
+    font-size: var(--fs-3);
     font-weight: bold;
+    margin-block: 0.4em;
   }
 
-  #first-splash-row {
-    width: 100%;
-  }
-
-  #close-splash-button {
+  .splash-close-button {
     position: absolute;
     top: 20px;
     right: 20px;
@@ -241,61 +286,61 @@ function closeSplashScreen() {
   }
 
   .splash-content {
-    // in the grid, the text is in the 2nd column
     display: flex;
     flex-direction: column;
-    line-height: 130%;
-
+    gap: 0.3em;
+    line-height: 1.3;
+    margin-top: 0.5em;
   }
 
   .splash-get-started {
     border: 2px solid white;
-    font-size: 0.5em;
+    font-size: var(--fs-2);
     font-weight: bold !important;
+    // override the vuetify passing to be responsive
+    padding-inline: 1.2em !important;
+    height: auto !important;
+    min-height: 2.2em !important;
   }
 
-  #splash-screen-guide {
-    margin-block: 1.5em;
-    font-size: min(5vw, 4vh);
-    line-height: 140%;
-    width: 75%;
-
-    .v-col{
-      padding: 0;
-    }
-
-    .svg-inline--fa {
-      color:var(--accent-color);
-      margin: 0 10px;
-    }
-  }
-
-  #splash-screen-acknowledgements {
-    // margin-top: 3rem;
-    margin: clamp(0.5rem, 3vh, 3rem) auto;
-    margin-bottom: 0;
-    font-size: 1em;
+  .splash-acknowledgements {
+    font-size: var(--fs-0);
     line-height: calc(var(--default-line-height));
-    width: 80%;
+  }
 
-    @media only screen and (max-width: 600px) {
-      width: 80%;
+  // the logo row can't wrap (#icons-container below is nowrap), so on a
+  // narrow phone it's often wider than its box - flex + justify-content
+  // keeps it centered as it overflows; margin: auto doesn't, it just
+  // collapses to 0 and overflows to one side
+  .splash-logos {
+    display: flex;
+    justify-content: center;
+  }
+
+
+
+  .splash-credit-logos {
+    
+    // don't wrap the logos - if they don't fit then shrink them
+    // so we have to overrid #icons-container from CreditLogos
+    #icons-container {
+      white-space: nowrap;
+      width: fit-content;
     }
-  }
-
-  #splash-screen-credit-logos {
+    
+    
     img {
-    // height: 65px;
-    vertical-align: middle;
-    margin-inline: 0.5em;
-    margin-block: 0.25em;
-  }
+      vertical-align: middle;
+      margin-inline: 0.2em;
+      margin-block: 0.25em;
+    }
 
-    // the CfA wordmark is a wide, thin image, so at the shared logo-size
-    // height its text reads much smaller than the other (roughly square)
-    // logos
+    // size the CfA logo so that it's height matches the others
     .logo-cfa img {
-      height: clamp(39px, 7vmin, 91px);
+      width: auto;
+      height: auto;
+      max-height: var(--logo-size);
+      max-width: 110px;
     }
 
     svg {
@@ -303,40 +348,39 @@ function closeSplashScreen() {
       height: 24px;
     }
   }
-}
 
-@media (max-height: 500px) {
-  #splash-screen {
-    // display: flex;
-    // flex-direction: column;
-    // max-width: 200vh;
-    // justify-content: center;
-    // align-items: center;
-    // gap: calc(0.5 * var(--default-line-height));
+
+  @media (max-height: 500px) {
     overflow: hidden;
 
-  .splash-content {
-    line-height: 75%;
+    .splash-content {
+      line-height: 115%;
+    }
   }
 
-  .splash-get-started {
-    margin-bottom: 0;
+  @media (max-height: 310px) {
+    gap: 0.25em;
+    padding-block: 0.5rem;
+
+    // use this instead of v-if. the images still load though, but 
+    // lets me get rid of the extra js. 
+    .splash-acknowledgements {
+      display: none;
+    }
   }
 
-  #splash-screen-acknowledgements {
-    font-size: 1em;
-  }
-}
-
-}
-
-@media (max-height: 310px) {
-  #splash-screen {
-    width: 50vw;
-    padding-block: 10px;
-  }
-  #splash-screen-acknowledgements  {
-    display: none;
+  &.is-fullscreen {
+    // set by the prop fullscreenOnSmall. only applies on small screens
+    // the 310px size is pretty useless, but also doesn't seem wholly necessary
+    // on vuetify's xs size <600px
+    @media (max-width: 310px) {
+      max-width: 100vw;
+      max-height: 100vh;
+      width: 100vw;
+      height: 100vh;
+      border-width: 6px;
+      border-radius: 0;
+    }
   }
 }
 

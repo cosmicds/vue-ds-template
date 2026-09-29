@@ -19,21 +19,23 @@
       <SplashScreen
         v-model="showSplashScreen"
         :color="accentColor"
+        fullscreen-on-small
         @close="closeSplashScreen"
       >
-        <p class="small text-center">
-          This Data Story is brought to you by
-          <a
-            href="https://www.cosmicds.cfa.harvard.edu/"
-            target="_blank"
-            rel="noopener"
-          >Cosmic Data Stories</a> and
-          <a
-            href="https://www.worldwidetelescope.org/home/"
-            target="_blank"
-            rel="noopener"
-          >WorldWide Telescope</a>.
-        </p>
+        <div class="splash-content">
+          <!-- the text styling comes through the a plain p-tag css selector 
+            .splash-lead and .hightlight get larger fonts, and highlight gets accentColor
+           -->
+          <p class="splash-lead">
+            Explore
+          </p>
+          <p class="highlight">
+            the night sky
+          </p>
+          <p>
+            &amp; let it inspire you to dare to do mighty things. it's reading rainbow
+          </p>
+        </div>
       </SplashScreen>
 
       <wwt-loader v-model="isLoading" />
