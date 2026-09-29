@@ -5,6 +5,7 @@ import eslintVueParser from 'vue-eslint-parser';
 import globals from 'globals';
 import typescriptEslint from 'typescript-eslint';
 import eslintPluginVuetify from 'eslint-plugin-vuetify';
+import pluginVueA11y from "eslint-plugin-vuejs-accessibility";
 
 export default typescriptEslint.config(
   { ignores: ['**/dist'] },
@@ -15,6 +16,7 @@ export default typescriptEslint.config(
       ...typescriptEslint.configs.strict,
       ...typescriptEslint.configs.stylistic,
       // ...eslintPluginVue.configs['flat/essential'], // handle Vue specific rules in a separate block
+      
     ],
     
     
@@ -115,6 +117,20 @@ export default typescriptEslint.config(
       // ariaLabel has to stay camelCase - kebab-case doesn't type-check against icon-button's prop
       'vue/attribute-hyphenation': ['error', 'always', { ignore: ['ariaLabel'] }],
     },
+  },
+  
+  // vue-ally linter
+  {
+    files: ['**/*.vue'],
+    extends: [
+      ...pluginVueA11y.configs["flat/recommended"],
+    ],
+    plugins: {
+      "vuejs-accessibility": pluginVueA11y,
+    },
+    rules: {
+      "vuejs-accessibility/media-has-caption": "off",
+    }
   }
 
 );
