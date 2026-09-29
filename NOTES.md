@@ -44,3 +44,21 @@ is fine since vuetify is required. someone who wants to do so much as to strip o
 as a dependency is likely also willing to take on the cost of rewriting their own css
 - something to note on themeing is that we often want our buttons to have the accent color
   `<v-btn>` defaults to the `variant=elevated` (which looks like `flat`, except with elevation) `surface` for the background with `on-surface` for the text
+  
+  
+  
+# link local packages
+[yarn link](https://yarnpkg.com/cli/link)
+Link (local dev copies):
+```bash
+yarn link ../../wwt-webgl-engine/engine ../../wwt-webgl-engine/engine-pinia ../../wwt-webgl-engine/engine-types ../../wwt-webgl-engine/engine-helpers ../../wwt-webgl-engine/astro
+yarn link ../vue-toolkit
+```
+
+Unlink (back to registry versions):
+```bash
+yarn unlink ../../wwt-webgl-engine/engine ../../wwt-webgl-engine/engine-pinia ../../wwt-webgl-engine/engine-types ../../wwt-webgl-engine/engine-helpers ../../wwt-webgl-engine/astro
+yarn unlink ../vue-toolkit
+```
+
+you can do `yarn link -r` if you want relative paths
