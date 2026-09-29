@@ -420,12 +420,6 @@ body {
   gap: 5px;
 }
 
-// based on Sara Soueidan (https://www.sarasoueidan.com/blog/focus-indicators/) & Erik Kroes (https://www.erikkroes.nl/blog/the-universal-focus-state/)
-:focus-visible:not(.v-btn):not(.v-field):not(.v-input) {
-  outline: 4px double white;
-  box-shadow: 0 0 0 2px black;
-  border-radius: .125rem;
-}
 
 /** ====== Define our standard Side/Bottom panel layout
 The default DOM structure is basically
