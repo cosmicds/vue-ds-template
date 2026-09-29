@@ -49,9 +49,13 @@
       >
         <div id="top-content">
           <div id="left-buttons">
+            <!-- icon-buttons default to size="1em"
+             id's and classes will be added to the div.icon-wrapper
+             it uses slotted styles so it's specificiy is (0,2,0)
+              -->
             <icon-button
               v-model="showTextSheet"
-              icon="book-open"
+              icon="question"
               :ariaLabel="showTextSheet ? 'Hide Info' : 'Learn More'"
               :color="accentColor"
               :tooltip-text="showTextSheet ? 'Hide Info' : 'Learn More'"
