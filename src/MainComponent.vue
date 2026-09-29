@@ -293,6 +293,19 @@ function closeSplashScreen() {
   --default-line-height: clamp(1rem, 2.2vmin, 1.6rem);
 }
 
+// based on Sara Soueidan (https://www.sarasoueidan.com/blog/focus-indicators/) & Erik Kroes (https://www.erikkroes.nl/blog/the-universal-focus-state/)
+:focus-visible:not(.v-btn):not(.v-field):not(.v-input) {
+  // outline: 4px double white;
+  // box-shadow: 0 0 0 2px black;
+  outline: none; /* outline needs to be none to override the broswer */
+  box-shadow: 
+    inset 0 0 0 2px white,  /* from -2 to 0*/
+    0 0 0 3px #0B5CB3, /* from 0 to 3 -  */
+    0 0 0 5px white; /* from 0 to 5 */
+  border-radius: .125rem;
+}
+
+
 html {
   height: 100%;
   margin: 0;
