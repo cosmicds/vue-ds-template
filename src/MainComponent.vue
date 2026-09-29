@@ -159,7 +159,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from "vue";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ref, reactive, computed, onMounted, watch } from "vue";
 import type { StyleValue } from "vue";
 import { WWTControl } from "@wwtelescope/engine";
 import { GotoRADecZoomParams, WWTComponent as WorldWideTelescope, engineStore } from "@wwtelescope/engine-pinia";
@@ -186,10 +187,8 @@ const extraLogos = [{
   name: "cfa",
 }];
 
-type CameraParams = Omit<GotoRADecZoomParams, "instant">;
 export interface MainComponentProps {
   wwtNamespace?: string;
-  initialCameraParams?: CameraParams;
 }
 
 const store = engineStore();
@@ -198,16 +197,15 @@ useWWTKeyboardControls(store);
 
 const { smallSize, sidePanel } = useAppLayout();
 
-const props = withDefaults(defineProps<MainComponentProps>(), {
+withDefaults(defineProps<MainComponentProps>(), {
   wwtNamespace: "vue-ds-template",
-  initialCameraParams: () => {
-    return {
-      raRad: 0,
-      decRad: 0,
-      zoomDeg: 60
-    };
-  }
 });
+
+const initialCameraParams = {
+  raRad: 0,
+  decRad: 0,
+  zoomDeg: 60
+} as Omit<GotoRADecZoomParams, "instant">;
 
 const splash = new URLSearchParams(window.location.search).get("splash")?.toLowerCase() !== "false";
 const showSplashScreen = ref(splash);
@@ -237,7 +235,7 @@ onMounted(() => {
   store.waitForReady().then(async () => {
     skyBackgroundImagesets.forEach(iset => backgroundImagesets.push(iset));
     store.gotoRADecZoom({
-      ...props.initialCameraParams,
+      ...initialCameraParams,
       instant: true
     }).then(() => positionSet.value = true);
 
