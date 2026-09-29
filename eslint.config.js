@@ -129,7 +129,10 @@ export default typescriptEslint.config(
       "vuejs-accessibility": pluginVueA11y,
     },
     rules: {
+      // we will probably want to enable this at some point.
       "vuejs-accessibility/media-has-caption": "off",
+      // this probably is a good rule to have, but too strict for a starter template
+      "vuejs-accessibility/tabindex-no-positive": "off",
     }
   }
 
