@@ -3,6 +3,7 @@
   <!-- the vars go on the root so the tabs, the close icon and every InfoPage
        inherit the same set -->
   <v-card
+    v-if="showTextSheet"
     class="cds-info-sheet"
     color="var(--info-sheet-bg)"
     :style="cssVars"
@@ -51,18 +52,19 @@
       style="height: 2.5em;"
     >
     </div>
-    <v-icon
+
+    <font-awesome-icon
       v-if="closable"
       id="close-text-icon"
-      class="control-icon"
-      size="large"
-      icon="mdi-close"
+      class="fa-close-icon"
+      icon="times"
+      size="lg"
       tabindex="0"
+      aria-hidden="false"
+      aria-label="Close Information Sheet"
       @click="handleClose"
       @keyup.enter="handleClose"
-    >
-    </v-icon>
-
+    ></font-awesome-icon>
     <!-- Information Content -->
     <!-- mandatory for the same same reason  -->
     <v-window id="info-sheet-window" v-model="tabName" :mandatory="true" class="pb-2">
@@ -279,10 +281,6 @@ const cssVars = computed(() => {
     top: 0.5em;
     right: calc((3em - 0.6875em) / 3); // font-awesome-icons have width 0.6875em
     color: var(--info-sheet-tab-color, white);
-
-    &:hover {
-      cursor: pointer;
-    }
   }
   
 

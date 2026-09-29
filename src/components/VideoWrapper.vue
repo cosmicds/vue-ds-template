@@ -9,11 +9,12 @@
     <div class="video-wrapper">
       <font-awesome-icon
         id="video-close-icon"
-        class="close-icon"
+        class="fa-close-icon"
         icon="times"
         size="lg"
         tabindex="0"
         aria-hidden="false"
+        aria-label="Close Video"
         @click="showVideoSheet = false"
         @keyup.enter="showVideoSheet = false"
       ></font-awesome-icon>
@@ -44,7 +45,6 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 interface VideoProps {
   /** a YouTube link (watch, youtu.be, shorts or embed) or the URL of a video file (mp4, webm, ...) */
@@ -135,7 +135,6 @@ const cssVars = computed(() => ({ "--video-aspect": videoAspect.value }));
   position: absolute;
   top: 1rem;
   right: 1rem;
-  cursor: pointer;
   color: white;
   z-index: 1001;
 }

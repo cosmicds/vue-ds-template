@@ -18,14 +18,6 @@
         <div class="background">
           <div class="background-blur"></div>
         </div>
-        <font-awesome-icon
-          class="splash-close-button"
-          icon="xmark"
-          tabindex="0"
-          aria-hidden="false"
-          @click="closeSplashScreen"
-          @keyup.enter="closeSplashScreen"
-        />
         <slot />
 
         <div
@@ -37,6 +29,7 @@
             color="secondary"
             variant="elevated"
             rounded="lg"
+            tabindex="0"
             @click="closeSplashScreen"
             @keyup.enter="closeSplashScreen"
           >
@@ -69,6 +62,15 @@
             />
           </div>
         </div>
+        <font-awesome-icon
+          class="splash-close-button fa-close-icon"
+          icon="xmark"
+          tabindex="0"
+          aria-hidden="false"
+          aria-label="Close Splash Screen"
+          @click="closeSplashScreen"
+          @keyup.enter="closeSplashScreen"
+        />
       </div>
     </focus-trap>
   </v-overlay>
@@ -78,7 +80,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { FocusTrap } from "focus-trap-vue";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { CreditLogos } from "@cosmicds/vue-toolkit";
 
 const cfaExtraLogo = [{
@@ -172,7 +173,8 @@ function closeSplashScreen() {
 #splash-screen {
   color: white;
   user-select: none;
-  contain: paint;
+  // https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/contain
+  contain: paint; // this is like a a super overflow: hidden
 
   // one continuous curve from phone to desktop instead of a breakpoint jump -
   // grows with the viewport, floored so it's never cramped, capped so it
@@ -180,11 +182,14 @@ function closeSplashScreen() {
   max-width: clamp(280px, 90vw, 640px);
   max-height: clamp(320px, 85vh, 700px);
   --border-radius: 30px;
+  --border-max: 6px;
+  --border-min: 2px;
+  --border-thickness: clamp(var(--border-min), 0.4vmax, var(--border-max));
 
   .background {
     position: fixed;
     inset: 0;
-    background-color: black;
+    background-color: white;
     background-image: var(--background-image);
     background-size: cover;
     background-position: center;
@@ -195,7 +200,9 @@ function closeSplashScreen() {
     filter: brightness(0.7);
     contain: strict;
     z-index: -1;
-    border-radius: var(--border-radius);
+    // we do not need the border radius because of the contain: paint on the #splash-screen
+    // but if we did, we'd need to account for the border thickness since this border is nested inside the other
+    // border-radius: calc (var(--border-radius) - var(--border-thickness));
   }
 
   .background-blur {
@@ -222,7 +229,7 @@ function closeSplashScreen() {
   // this clamps it and keeps it balanced in both dimensions
   --border-max: 6px;
   --border-min: 2px;
-  border: clamp(var(--border-min), 0.4vmax, var(--border-max)) solid var(--accent-color);
+  border: var(--border-thickness) solid var(--accent-color);
   overflow: auto;
   font-family: 'Highway Gothic Narrow', 'Roboto', sans-serif;
 
@@ -279,10 +286,6 @@ function closeSplashScreen() {
     font-size: min(5vw, 4vh);
     padding: 0.25rem;
     margin: -0.25rem;
-
-    &:hover {
-      cursor: pointer;
-    }
   }
 
   .splash-content {
@@ -305,7 +308,7 @@ function closeSplashScreen() {
 
   .splash-acknowledgements {
     font-size: var(--fs-0);
-    line-height: calc(var(--default-line-height));
+    line-height: clamp(1rem, 2.2min, 1.6rem);
   }
 
   // the logo row can't wrap (#icons-container below is nowrap), so on a

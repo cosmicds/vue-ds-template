@@ -287,9 +287,10 @@ function closeSplashScreen() {
 </script>
 
 <style lang="less">
+@import url(@/css/universal.css);
 :root {
-  --default-font-size: clamp(0.7rem, min(1.7vh, 1.7vw), 1.1rem);
-  --default-line-height: clamp(1rem, min(2.2vh, 2.2vw), 1.6rem);
+  --default-font-size: clamp(0.7rem, 1.7vmin, 1.1rem);
+  --default-line-height: clamp(1rem, 2.2vmin, 1.6rem);
 }
 
 html {

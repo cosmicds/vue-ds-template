@@ -9,6 +9,7 @@ import MainComponent from "./MainComponent.vue";
 import { wwtPinia } from "@wwtelescope/engine-pinia";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
   faBookOpen,
   faTimes,
@@ -30,6 +31,9 @@ createApp(MainComponent, {
   // Plugins
   .use(wwtPinia as unknown as Plugin<[]>)
   .use(vuetify)
+
+  // global so components don't each need their own FontAwesomeIcon import
+  .component("font-awesome-icon", FontAwesomeIcon)
 
   // Directives
   .directive(
