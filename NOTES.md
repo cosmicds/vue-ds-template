@@ -35,3 +35,12 @@ and placed into public because things in `assets` need to be manually imported i
 imported if in a pure html string (still need to be at `./assets/mything.ext`) because we have `transformAssetUrls`.
 css strings (`url(...)` in less/css) are a separate thing, vite resolves those on its own, transformAssetUrls is
 only for the vue template
+
+
+we are be default using a custom vue theme, so that it is setup in case we need it. 
+i also use it so that we can include custom values, in a way that will allow use to
+better create themes, and have more centralized control over colors. i think this 
+is fine since vuetify is required. someone who wants to do so much as to strip out vuetify
+as a dependency is likely also willing to take on the cost of rewriting their own css
+- something to note on themeing is that we often want our buttons to have the accent color
+  `<v-btn>` defaults to the `variant=elevated` (which looks like `flat`, except with elevation) `surface` for the background with `on-surface` for the text
