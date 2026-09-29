@@ -33,7 +33,7 @@
       @keydown.right.prevent="cycleTab(1)"
     >
       <v-tab 
-        v-for="whichTab in tabs" 
+        v-for="whichTab in visibleTabs" 
         :key="whichTab.value"
         :value="whichTab.value"
         class="cds-info-sheet-tab" 
@@ -103,6 +103,8 @@ export interface Props {
   closable?: boolean,
   /** move tabs left, right or center */
   alignTabs?: 'start' | 'center' | 'end' | 'title',
+  /** only show the active tab */
+  onlyShowOne?: boolean,
 }
 </script>
 
@@ -131,6 +133,12 @@ interface TabSpec {
 
 /** this will hold the list of tabs that get registered by child InfoPage components */
 const tabs = ref<TabSpec[]>([]);
+const visibleTabs = computed(() => {
+  if (props.onlyShowOne) {
+    return tabs.value.filter(tab => tab.value === tabName.value);
+  }
+  return tabs.value;
+});
 
 const showTextSheet = defineModel<boolean>();
 /** name of the currently selected tab. kebab-case of the tab `title` if `value` not set */
@@ -285,7 +293,7 @@ const cssVars = computed(() => {
   
 
   #close-text-icon {
-    top: 0.25em;
+    top: 0.0.5em;
     right: calc((2em - 0.6875em) / 3);
   }
 

@@ -50,7 +50,7 @@
         <div id="top-content">
           <div id="left-buttons">
             <!-- icon-buttons default to size="1em"
-             id's and classes will be added to the div.icon-wrapper
+             id's and classes will be added to the .icon-wrapper
              it uses slotted styles so it's specificiy is (0,2,0)
               -->
             <icon-button
@@ -60,6 +60,7 @@
               :color="accentColor"
               :tooltip-text="showTextSheet ? 'Hide Info' : 'Learn More'"
               tooltip-location="start"
+              size="lg"
             >
             </icon-button>
             <icon-button
@@ -69,8 +70,11 @@
               :color="accentColor"
               tooltip-text="Watch video"
               tooltip-location="start"
+              size="lg"
             >
             </icon-button>
+            <!-- we use a .icon-wrapper.tonal declaration to override
+             the styles to sorta mimic a v-btn[variant=tonal] -->
             <icon-button
               v-model="showShort"
               icon="mdi-youtube"
@@ -78,6 +82,7 @@
               :color="accentColor"
               tooltip-text="Watch short"
               tooltip-location="start"
+              size="lg"
             >
             </icon-button>
           </div>
@@ -88,12 +93,13 @@
         </div>
 
         <div id="bottom-content">
-          <div v-if="!smallSize" id="body-logos">
-            <credit-logos
-              :default-logos="['cosmicds', 'wwt', 'nasa']"
-              :extra-logos="extraLogos"
-            />
-          </div>
+          <!-- credit logos id=logo-credits -->
+          <credit-logos
+            v-if="!xs"
+            :default-logos="['cosmicds', 'wwt', 'nasa']"
+            :logo-size="xs ? '2em' : '2.5em'"
+            :extra-logos="extraLogos"
+          />
         </div>
       </div>
 
@@ -133,6 +139,11 @@
         v-model:tab is the name of the currently selected tab. It comes from the title in kebab-case or the value if specified
         Each tab must havea unique value. If the sheet is closed and you want to show a specific tab, you must set
         the showTextSheet to true and set the infoSheetTab to the value of the tab you want to show.
+        
+        Some available options are
+        hide-tabs: (default: false) hide the tab bar, but keep space for the close button
+        only-show-one: (default: false) only show the active tab, hide the others
+        closable: (default: true) show the close button
       -->
       <information-sheet
         v-model="showTextSheet"
@@ -140,7 +151,6 @@
         :tab-color="accentColor"
         :slider-color="accentColor"
         :accent-color="accentColor"
-        closable
         align-tabs="start"
       >
         <!-- info-page content is wrapped in a .info-page class  -->
@@ -216,13 +226,16 @@ const showShort = ref(false);
 
 const showWebGL2Warning = ref(false);
 
-import {useTheme} from "vuetify";
+import {useTheme, useDisplay} from "vuetify";
 const theme = useTheme();
 // in the past we have used accentColor and accentColor2, but these serve the same purpose
 // as vuetify's primary and secondary colors, so we tie them to that. vuetify components
 // can access them directly as `color="primary" on the prop, and they are aleady available in the CSS as --v-theme-primary and --v-theme-secondary
 const accentColor = computed(() => theme.current.value.colors.primary);
 const accentColor2 = computed(() => theme.current.value.colors.secondary);
+
+const { xs } = useDisplay();
+
 
 onMounted(() => {
   if (showWebGL2Warning.value) {
@@ -417,9 +430,36 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  pointer-events: none;
-  align-items: center;
+  pointer-events: auto;
+  align-items: flex-end;
   gap: 5px;
+  
+  // neither #logo-credits nor #icons-container are flex
+  #logo-credits > #icons-container{
+    a {
+      margin-inline: 0.3em;
+    }
+  }
+}
+
+.icon-wrapper {
+  // give us circles. 
+  border-radius: 50% !important;
+  aspect-ratio: 1/1;
+  // even padding
+  padding: 8px !important;
+}
+
+.icon-wrapper.tonal {
+  // tonal style
+  background-color: rgba(var(--v-theme-primary), 0.4) !important;
+  color: rgba(var(--v-theme-primary), 0.9) !important;
+  border: none !important;
+}
+
+.icon-wrapper.tonal:hover {
+  background-color: rgba(var(--v-theme-primary), 0.6) !important;
+  color: rgba(var(--v-theme-primary), 1) !important;
 }
 
 
