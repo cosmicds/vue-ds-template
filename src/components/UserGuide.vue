@@ -14,7 +14,7 @@
         dense
         class="mt-2 mx-3"
       >
-        <v-col cols="4">
+        <v-col cols="2">
           <v-chip
             label
             density="compact"
@@ -36,7 +36,7 @@
         dense
         class="mx-3"
       >
-        <v-col cols="4">
+        <v-col cols="2">
           <v-chip
             label
             density="compact"
@@ -58,7 +58,7 @@
         dense
         class="mx-3"
       >
-        <v-col cols="4">
+        <v-col cols="2">
           <v-chip
             label
             density="compact"
@@ -137,7 +137,19 @@ const touchscreen = supportsTouchscreen();
   height: 25px;
 }
 
+
+
 .v-row {
   flex-grow: 0;
+}
+
+kbd {
+  font-size: 0.8em;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-family: monospace;
+  font-weight: bold;
+  box-shadow: 0px 2px 1px #ccc;
 }
 </style>
