@@ -299,8 +299,8 @@ function closeSplashScreen() {
   outline: none; /* outline needs to be none to override the broswer */
   box-shadow:
     inset 0 0 0 2px white,
-    /* from -2 to 0*/ 0 0 0 3px #0b5cb3,
-    /* from 0 to 3 -  */ 0 0 0 5px white; /* from 0 to 5 */
+    0 0 0 3px #0b5cb3,
+    0 0 0 5px white; 
   border-radius: 0.125rem;
 }
 
