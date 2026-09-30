@@ -112,8 +112,8 @@
 
     <div
       v-show="!showSplashScreen"
-      id="side-drawer"
-      :class="[sidePanel ? 'info-side' : 'info-bottom', showTextSheet ? 'side-drawer-open' : 'side-drawer-closed']"
+      id="drawer"
+      :class="[sidePanel ? 'info-side' : 'info-bottom', showTextSheet ? 'drawer-open' : 'drawer-closed']"
     >
       <!--
         The Information Sheet and InfoPage are vue "tightly coupled" components
@@ -136,14 +136,35 @@
         :slider-color="accentColor"
         :accent-color="accentColor"
         align-tabs="start"
+        compact-tabs
       >
         <!-- info-page content is wrapped in a .info-page class  -->
         <info-page title="Information">
+          <!-- everything inside the info-page is wrapped in a div with class "info-page" -->
           <!-- we generally use heading level 3 (the same level as the tabs) -->
           <h3>Science Information</h3>
-          <p>Learn some cool science facts</p>
+          <p>Sample Science Information</p>
         </info-page>
 
+        <!-- 
+        Example of an Info Page with a stable footer and scrollable upper section. 
+        -->
+        <!--
+        <info-page title="Example" name="example">
+          <div class="ip-example-header">[Optional] This will stay at the top</div>
+          <div class="flex-grow-1 overflow-y-auto my-5 bg-red">
+            <p>This will fill the middle and scroll if needed.</p>
+            <p>The <code>flex-grow: 1</code>, causes it to fill the parent's height because the parent
+              <code>.info-page</code> is <code>display: flex</code></p>
+            <p v-for="i in 100" :key="i">This is line {{ i }}</p>
+          </div>
+          <div class="ip-example-footer">This will stay at the bottom</div>
+        </info-page>
+        -->
+
+        <!-- the user guide is an <InfoPage title="User Guide" value="user-guide>...</InfoPage>"
+         it can be userful to move complex content into a separate component
+         -->
         <user-guide />
       </information-sheet>
     </div>
@@ -300,7 +321,7 @@ function closeSplashScreen() {
   box-shadow:
     inset 0 0 0 2px white,
     0 0 0 3px #0b5cb3,
-    0 0 0 5px white; 
+    0 0 0 5px white;
   border-radius: 0.125rem;
 }
 
@@ -450,7 +471,7 @@ The default DOM structure is basically
       <WorldWideTelescope />
       <div #wwt-overlay />
     </div>
-    <div #side-drawer />
+    <div #drawer />
   </div>
 </div>
 ======== */
@@ -466,7 +487,7 @@ The default DOM structure is basically
   flex-direction: row;
 }
 
-// side-panel layout: #side-drawer follows #main-content in the DOM,
+// side-panel layout: #drawer follows #main-content in the DOM,
 // so flipping the order is what puts the panel on the left of the view
 // order sets the order of the children of a flex container
 #app.app-side-panel {
@@ -474,47 +495,45 @@ The default DOM structure is basically
     order: 1; // on the right
   }
 
-  #side-drawer {
+  #drawer {
     order: 0; // on the left
   }
 }
 
 // in-flow flex sibling of #main-content, so opening it shrinks the WWT view
 // instead of covering it. Default is the bottom panel: full width, growing in height.
-#side-drawer {
+#drawer {
   flex: 0 0 auto;
   overflow: hidden;
   width: 100%;
   height: 0;
   border-radius: 5px 5px 0 0;
 
-  &.side-drawer-open {
+  &.drawer-open {
     height: 34%;
   }
 }
 
 // side panel: full height, growing in width
-.app-side-panel #side-drawer {
+.app-side-panel #drawer {
   width: 0;
   height: 100%;
   border-radius: 0 5px 5px 0;
 
-  &.side-drawer-open {
+  &.drawer-open {
     width: 34%;
   }
 }
 
-.info-text {
-  padding: 1rem;
-}
-
 // Basic text styling for the InformationSheet's content - simpler to set
 // here globally than to thread a heading-color prop through.
-.cds-info-sheet .info-text {
-  h3,
-  h4,
-  h5 {
+.cds-info-sheet .info-page {
+  h3 {
     color: steelblue;
   }
+
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 </style>

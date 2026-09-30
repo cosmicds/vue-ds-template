@@ -1,11 +1,13 @@
 <template>
   <v-window-item
     :value="tabValue"
-    class="flex-grow-1 info-page"
-    :class="[`info-page-${tabValue}`, { 'info-page-active': _isActive }]"
+    class="flex-grow-1 info-page-wrapper"
     :style="cssVars"
   >
-    <div class="info-text">
+    <div
+      class="info-page"
+      :class="[`info-page-${tabValue}`, { 'info-page-active': _isActive }]"
+    >
       <slot />
     </div>
   </v-window-item>
@@ -54,13 +56,14 @@ onUnmounted(() => {
 <!-- we also make sure they are "scoped" by specifying them as children of cds-info-sheet belonging in the cds-info-sheet  -->
 <style scoped lang="less">
 // v-card
-.cds-info-sheet .info-page {
+.cds-info-sheet .info-page-wrapper {
   display: block;
   position: relative;
   z-index: 0;
 
   overflow-x: hidden;
   overflow-wrap: break-word;
+  // overscroll-behavior: none;
   background-color: var(--info-sheet-page-bg);
 
   // takes the place of .scrollable
@@ -68,13 +71,12 @@ onUnmounted(() => {
   height: 100%;
 }
 
-// What v-card-text
-.cds-info-sheet .info-text {
-  flex: 1 1 auto;
-  line-height: 1.425;
-
-  // takes the place of .scrollable
-  overflow-y: visible;
+// the parent is by default display: block,
+// so don't define flex attributes here. if you need to, define them
+// in the main app
+.cds-info-sheet .info-page {
+  line-height: 1.425; // mimic old v-card-text style
+  overflow-y: auto;
   height: 100%;
 }
 </style>

@@ -37,6 +37,7 @@
         :key="whichTab.value"
         :value="whichTab.value"
         class="cds-info-sheet-tab"
+        :class="{ 'cds-info-sheet-tab-compact': compactTabs }"
         :ripple="false"
         tabindex="0"
       >
@@ -49,7 +50,7 @@
     <div
       v-else-if="closable"
       class="cds-info-sheet-tabs cds-info-sheet-header"
-      style="height: 2.5em"
+      style="height: 36px"
     ></div>
 
     <font-awesome-icon
@@ -70,7 +71,6 @@
       id="info-sheet-window"
       v-model="tabName"
       :mandatory="true"
-      class="pb-2"
     >
       <slot />
     </v-window>
@@ -108,6 +108,10 @@ export interface Props {
   alignTabs?: "start" | "center" | "end" | "title";
   /** only show the active tab */
   onlyShowOne?: boolean;
+  /** make the tabs more compact */
+  compactTabs?: boolean;
+  /** set an explicit tab order. useful if dynamically populating slots.  */
+  tabOrder?: string[];
 }
 </script>
 
@@ -117,6 +121,7 @@ import { provide, readonly } from "vue";
 
 const props = withDefaults(defineProps<Props>(), {
   closable: true,
+  compactTabs: false,
 });
 
 const emit = defineEmits(["close", "update:tabName"]);
@@ -137,6 +142,12 @@ const tabs = ref<TabSpec[]>([]);
 const visibleTabs = computed(() => {
   if (props.onlyShowOne) {
     return tabs.value.filter((tab) => tab.value === tabName.value);
+  }
+  if (props.tabOrder) {
+    // sort the tabs according to the order specified in props.tabOrder
+    return props.tabOrder
+      .map((value) => tabs.value.find((tab) => tab.value === value))
+      .filter((tab) => tab !== undefined);
   }
   return tabs.value;
 });
@@ -254,29 +265,37 @@ const cssVars = computed(() => {
 <style scoped lang="less">
 .cds-info-sheet {
   .cds-info-sheet-tab h3 {
-    font-size: 1.1em;
+    font-size: 1em;
   }
 
   // use this to make the tabs narrower
   // the double .v-tab is used to beat vuetify's specificity.
-  // .cds-info-sheet-tab.v-btn.v-tab.v-tab {
-  //   padding-inline: 4px;
-  //   min-width: 0px;
-  // }
+  .cds-info-sheet-tab.cds-info-sheet-tab-compact.v-btn.v-tab.v-tab {
+    padding-inline: 4px;
+    margin-inline: 2px;
+    min-width: 0px;
+  }
 
   .cds-info-sheet-tab.v-btn.v-tab.v-tab.v-tab--selected {
     background-color: rgba(255, 255, 255, 0.05);
   }
-}
 
-.cds-info-sheet {
   .cds-info-sheet-tabs {
     width: calc(100% - 3em);
     align-self: left;
   }
 
+  // make the window and window__container (where the info page goes)
+  // fill the space below the tabs
   #info-sheet-window {
-    height: calc(100% - 32px);
+    display: flex;
+    flex-direction: column;
+    // scoped, so need :deep
+    :deep(.v-window__container) {
+      flex-grow: 1;
+      height: 100%;
+    }
+    height: calc(100% - 36px);
     overflow-y: auto;
   }
 
@@ -291,59 +310,55 @@ const cssVars = computed(() => {
     top: 0.5em;
     right: calc((2em - 0.6875em) / 3);
   }
-}
 
-.cds-info-sheet .info-text {
-  display: flex !important;
-  flex-direction: column;
-  // color: var(--info-sheet-text-color);
+  :deep(.info-page) {
+    a {
+      color: currentColor;
+      text-decoration-style: dotted;
+    }
 
-  a {
-    color: currentColor;
-    text-decoration-style: dotted;
-  }
+    h3 {
+      font-size: 1.4em;
+    }
 
-  h3 {
-    font-size: 1.4em;
-  }
+    h4 {
+      font-size: 1.2em;
+    }
 
-  h4 {
-    font-size: 1.2em;
-  }
+    h5 {
+      font-size: 1em;
+      font-weight: bold;
+      margin-top: 1em;
+    }
 
-  h5 {
-    font-size: 1em;
-    font-weight: bold;
-    margin-top: 1em;
-  }
+    li {
+      margin-block: 0.5em;
+    }
 
-  li {
-    margin-block: 0.5em;
-  }
+    details {
+      user-select: none;
+      margin-block: 0.5em;
+      outline: 1px solid rgba(255, 255, 255, 0.5);
+      padding: 2px 1em;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    details:hover {
+      outline: 2px solid #aeaeae;
+    }
 
-  details {
-    user-select: none;
-    margin-block: 0.5em;
-    outline: 1px solid rgba(255, 255, 255, 0.5);
-    padding: 2px 1em;
-    border-radius: 2px;
-    cursor: pointer;
-  }
-  details:hover {
-    outline: 2px solid #aeaeae;
-  }
+    pre {
+      background-color: rgb(50, 50, 50);
+      padding: 0.5em;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.8em;
+    }
 
-  pre {
-    background-color: rgb(50, 50, 50);
-    padding: 0.5em;
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.8em;
-  }
-
-  .bullet-icon {
-    color: currentColor;
-    width: 1.2em;
-    padding-right: 0.5em;
+    .bullet-icon {
+      color: currentColor;
+      width: 1.2em;
+      padding-right: 0.5em;
+    }
   }
 }
 </style>

@@ -110,7 +110,10 @@ export default typescriptEslint.config(
         "singleline": "ignore",
         "multiline": "below"
       }],
+      // In vue, you can define a prop as optional, but if you include withDefaults
+      // this rule would require you to define a default. Problems this rule prevents are prevented by typescript.
       'vue/require-default-prop': 'off',
+      // we like to live dangerously sometimes and this can be easier than a slot.
       'vue/no-v-html': 'off',
       'vue/multiline-html-element-content-newline': 'off',
       'vue/singleline-html-element-content-newline': 'off',

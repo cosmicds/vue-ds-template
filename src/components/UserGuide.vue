@@ -6,14 +6,14 @@
     value="user-guide"
   >
     <div class="d-flex flex-column fill-height">
-      <h4 class="user-guide-header mt-5">Sky Navigation</h4>
+      <h4 class="user-guide-header mt-2">Sky Navigation</h4>
       <p>To navigate the WWT view, use the following controls:</p>
       <v-row
         align-content="center"
         dense
         class="mt-2 mx-3"
       >
-        <v-col cols="2">
+        <v-col cols="4">
           <v-chip
             label
             density="compact"
@@ -35,7 +35,7 @@
         dense
         class="mx-3"
       >
-        <v-col cols="2">
+        <v-col cols="4">
           <v-chip
             label
             density="compact"
@@ -57,7 +57,7 @@
         dense
         class="mx-3"
       >
-        <v-col cols="2">
+        <v-col cols="4">
           <v-chip
             label
             density="compact"
