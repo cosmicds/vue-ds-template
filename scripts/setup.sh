@@ -45,6 +45,9 @@ cd public
 sed -i.bak "s/CosmicDS Vue Template/$title/g" site.webmanifest
 rm -f site.webmanifest.bak
 
+
 # Clear out git info since we don't want this to point to the vue-ds-template repo anymore
 cd ..
 rm -rf .git
+
+echo "Done! You can now delete the script folder and run 'yarn install' to install dependencies."
