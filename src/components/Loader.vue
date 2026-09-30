@@ -6,8 +6,10 @@
       class="modal"
     >
       <div class="container">
-        <div class="spinner"></div>
-        <p>Loading …</p>
+        <slot :loading="isLoading">
+          <div class="spinner"></div>
+          <p>Loading …</p>
+        </slot>
       </div>
     </div>
   </transition>
@@ -15,6 +17,12 @@
 
 <script setup lang="ts">
 const isLoading = defineModel<boolean>({ default: true });
+
+defineSlots<{
+  // not sure the return type is important. docs use any, but others use void
+  default(props: { loading: boolean}): void;
+}>();
+
 </script>
 
 <style scoped>
