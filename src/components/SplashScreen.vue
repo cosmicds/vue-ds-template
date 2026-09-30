@@ -39,7 +39,7 @@
 
         <div class="splash-acknowledgements">
           <slot name="credits">
-            <p class="splash-credits text-center">
+            <p class="splash-credits">
               This Data Story is brought to you by
               <a
                 href="https://www.cosmicds.cfa.harvard.edu/"
@@ -150,9 +150,6 @@ function closeSplashScreen() {
 .splash-overlay {
   align-items: center;
   justify-content: center;
-  // the 5vh version of this shrank everything too aggressively on a wide
-  // but short window (e.g. a laptop with a small browser height) - vh was
-  // the limiting term there even though there was plenty of width to spare.
   // fluid type/spacing 
   // https://piccalil.li/blog/fluid-typography-with-css-clamp/,
   // https://www.kevinpowell.co/article/typographic-scale/. also see Scott
@@ -160,7 +157,9 @@ function closeSplashScreen() {
   --fs-0: min(9vw, 6vh); // title / lead-in - .splash-overlay's font-size, inherited
   --fs-1: calc(var(--fs-0) / var(--scale)); // description
   --fs-2: calc(var(--fs-1) / var(--scale)); // button label
-  --fs-3: calc(var(--fs-2) / var(--scale)); // credits line
+  --fs-3: calc(var(--fs-2) / var(--scale)); 
+  --fs-4: calc(var(--fs-3) / var(--scale)); 
+  --fs-5: calc(var(--fs-4) / var(--scale)); // credits line
   font-size: var(--fs-0);
   transition: width 0.5s, height 0.5s;
 }
@@ -185,7 +184,26 @@ function closeSplashScreen() {
   --border-max: 6px;
   --border-min: 2px;
   --border-thickness: clamp(var(--border-min), 0.4vmax, var(--border-max));
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  gap: 0.4em;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  // shrinks toward 8px on a narrow phone instead of staying a flat 2rem -
+  --panel-padding-inline: clamp(8px, 2vw, 2rem);
+  padding-inline: var(--panel-padding-inline);
 
+
+  border-radius: var(--border-radius);
+  border: var(--border-thickness) solid var(--accent-color);
+  overflow: auto;
+  // switch the fallback fonts to serif for debugging
+  font-family: 'Highway Gothic Narrow', 'Roboto', sans-serif;
+  
+  
   .background {
     position: fixed;
     inset: 0;
@@ -212,22 +230,7 @@ function closeSplashScreen() {
     border-radius: var(--border-radius);
   }
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-content: center;
-  gap: 0.4em;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  // shrinks toward 8px on a narrow phone instead of staying a flat 2rem -
-  --panel-padding-inline: clamp(8px, 2vw, 2rem);
-  padding-inline: var(--panel-padding-inline);
-
-
-  border-radius: var(--border-radius);
-  border: var(--border-thickness) solid var(--accent-color);
-  overflow: auto;
-  font-family: 'Highway Gothic Narrow', 'Roboto', sans-serif;
+  
 
   div {
     margin-inline: auto;
@@ -239,11 +242,10 @@ function closeSplashScreen() {
   }
   // make a paragraph inside the div centered horizontally and vertically
   p {
-    font-family: 'Highway Gothic Narrow', 'Roboto', sans-serif;
     vertical-align: middle;
 
     font-size: var(--fs-1);
-    font-weight: 400;
+    font-weight: normal;
     line-height: 1.4;
   }
   
@@ -252,7 +254,7 @@ function closeSplashScreen() {
   .splash-lead {
     font-size: var(--fs-0);
     line-height: inherit;
-    font-weight: 400;
+    font-weight: normal;
   }
 
   // allow us to also highlight a <p> or a <span>
@@ -269,8 +271,8 @@ function closeSplashScreen() {
   // "brought to you by..." - placed above the logos, matching the fleet.
   // named splash-credits, not "small" - this file is unscoped
   .splash-credits {
-    font-size: var(--fs-3);
-    font-weight: bold;
+    font-size: var(--fs-4);
+    font-weight:normal;
     margin-block: 0.4em;
   }
 
