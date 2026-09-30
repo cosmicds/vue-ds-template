@@ -17,8 +17,7 @@
             href="https://get.webgl.org/webgl2/"
             target="_blank"
             rel="noopener noreferrer"
-            >here</a
-          >.
+          >here</a>.
         </p>
       </div>
     </v-card>

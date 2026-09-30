@@ -44,16 +44,14 @@
                 href="https://www.cosmicds.cfa.harvard.edu/"
                 target="_blank"
                 rel="noopener"
-                >Cosmic Data Stories</a
-              >
+              >Cosmic Data Stories</a>
               and
               <a
                 href="https://www.worldwidetelescope.org/home/"
                 target="_blank"
                 rel="noopener"
               >
-                WorldWide Telescope </a
-              >.
+                WorldWide Telescope </a>.
             </p>
           </slot>
           <div class="splash-logos">
