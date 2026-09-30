@@ -6,9 +6,6 @@
   >
     <webgl-test @webgl2-disabled="showWebGL2Warning = true" />
 
-    <div id="main-content">
-      <WorldWideTelescope :wwt-namespace="wwtNamespace"></WorldWideTelescope>
-
       <!-- This contains the splash screen content -->
 
       <SplashScreen
@@ -49,10 +46,8 @@
 
       <!-- This block contains the elements (e.g. icon buttons displayed at/near the top of the screen) -->
 
-      <div
-        v-show="!showSplashScreen"
-        id="wwt-overlay"
-      >
+      <div v-show="!showSplashScreen" id="wwt-overlay">
+        
         <div id="top-content">
           <div id="left-buttons">
             <!-- icon-buttons default to size="1em"
