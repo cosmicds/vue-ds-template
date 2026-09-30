@@ -57,5 +57,8 @@ cd public
 sed -i.bak "s/CosmicDS Vue Template/$title/g" site.webmanifest
 rm -f site.webmanifest.bak
 
+cd ..
+rm -rf scripts
 
-echo "Done! The new story is at ${target} - you can now delete its script folder and run 'yarn install' there to install dependencies."
+
+echo "Done! The new story is at ${target} - you can now run 'yarn install' there to install dependencies."
