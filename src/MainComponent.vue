@@ -5,24 +5,24 @@
     :class="[smallSize ? 'app-is-small' : '', sidePanel ? 'app-side-panel' : '']"
   >
     <webgl-test @webgl2-disabled="showWebGL2Warning = true" />
-
-      <!-- This contains the splash screen content -->
-
-      <SplashScreen
-        v-model="showSplashScreen"
-        :color="accentColor"
-        fullscreen-on-small
-        @close="closeSplashScreen"
-      >
-        <div class="splash-content">
-          <!-- the text styling comes through the a plain p-tag css selector 
-            .splash-lead and .hightlight get larger fonts, and highlight gets accentColor
-           -->
-          <p class="splash-lead">Explore</p>
-          <p class="highlight">the night sky</p>
-          <p>&amp; let it inspire you to dare to do mighty things. it's reading rainbow</p>
-        </div>
-      </SplashScreen>
+    
+    <!-- This contains the splash screen content -->
+     
+    <SplashScreen
+      v-model="showSplashScreen"
+      :color="accentColor"
+      fullscreen-on-small
+      @close="closeSplashScreen"
+    >
+      <div class="splash-content">
+        <!-- the text styling comes through the a plain p-tag css selector 
+          .splash-lead and .hightlight get larger fonts, and highlight gets accentColor
+          -->
+        <p class="splash-lead">Explore</p>
+        <p class="highlight">the night sky</p>
+        <p>&amp; let it inspire you to dare to do mighty things. it's reading rainbow</p>
+      </div>
+    </SplashScreen>
     
     <!-- This dialog contains the video that is displayed when the video icon is clicked -->
     <!-- 
@@ -346,6 +346,16 @@ body {
   font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
+
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  font-size: 11pt;
+}
+
 #main-content {
   // containing block for the absolutely positioned WWT host and overlay
   position: relative;
@@ -357,14 +367,6 @@ body {
   overflow: hidden;
 }
 
-#app {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  overflow: hidden;
-  overscroll-behavior: none;
-  font-size: 11pt;
-}
 
 // WWT fills #main-content, which gets its size from the flex layout above.
 // This breaks if #main-content stops having a definite size from layout.
@@ -378,8 +380,6 @@ body {
 
 .wwtelescope-component > canvas {
   display: block;
-  width: 100%;
-  height: 100%;
 }
 
 // #wwt-overlay is positioned against #main-content, not the viewport
@@ -389,7 +389,9 @@ body {
   left: 0;
   bottom: 0;
   right: 0;
-  padding: 1rem;
+  padding-inline: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 0.5rem;
   pointer-events: none;
 
   display: flex;
@@ -398,7 +400,7 @@ body {
 }
 
 #wwt-overlay > * {
-  // turns #wwt-overlay into a stacking context
+  // turns each item in #wwt-overlay into a stacking context
   isolation: isolate;
 }
 
@@ -524,8 +526,11 @@ The default DOM structure is basically
   }
 }
 
-// Basic text styling for the InformationSheet's content - simpler to set
-// here globally than to thread a heading-color prop through.
+/** ===================== */
+
+// Basic text styling for the InformationSheet's content 
+// it is better to set in the main app than to set things in the component
+// since the component may end up being imported from the toolkit. 
 .cds-info-sheet .info-page {
   h3 {
     color: steelblue;
