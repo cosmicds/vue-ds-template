@@ -26,6 +26,24 @@
           <p>&amp; let it inspire you to dare to do mighty things. it's reading rainbow</p>
         </div>
       </SplashScreen>
+    
+    <!-- This dialog contains the video that is displayed when the video icon is clicked -->
+    <!-- 
+      passing a youtube url to youtube-src instead will show a youtube video. 
+      pass aspect= "wide" or "vertical" to force 16:9 (wide or vertical) aspect ratio. 
+      -->
+    <VideoWrapper
+      v-model="showVideo"
+      video-src="./test-video-vertical.mp4"
+    />
+
+
+    <div id="main-content">
+      <WorldWideTelescope :wwt-namespace="wwtNamespace"></WorldWideTelescope>
+
+      
+
+      
 
       <wwt-loader v-model="isLoading" />
 
@@ -88,20 +106,6 @@
           />
         </div>
       </div>
-
-      <!-- This dialog contains the video that is displayed when the video icon is clicked -->
-
-      <VideoWrapper
-        v-model="showVideo"
-        src="./test-video-vertical.mp4"
-      />
-
-      <!-- This dialog contains the YouTube short that is displayed when the YouTube icon is clicked -->
-
-      <VideoWrapper
-        v-model="showShort"
-        src="https://youtube.com/shorts/-4kALiBHA5Y?si=Cse3ujkEkx49B3al"
-      />
     </div>
 
     <!--

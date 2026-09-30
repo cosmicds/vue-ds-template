@@ -20,7 +20,7 @@
       ></font-awesome-icon>
 
       <iframe
-        v-if="youtubeId"
+        v-if="youtubeSrc"
         id="info-video"
         :src="embedUrl"
         :style="cssVars"
@@ -32,7 +32,7 @@
       <video
         v-else
         id="info-video"
-        :src="src"
+        :src="videoSrc"
         :style="cssVars"
         controls
         :autoplay="autoplay"
@@ -47,8 +47,10 @@
 import { computed, ref } from "vue";
 
 interface VideoProps {
-  /** a YouTube link (watch, youtu.be, shorts or embed) or the URL of a video file (mp4, webm, ...) */
-  src: string;
+  /** the URL of a video file (mp4, webm, ...).  */
+  videoSrc?: string;
+  /** a YouTube link (watch, youtu.be, shorts or embed).*/
+  youtubeSrc?: string;
   /** 'auto' uses 9:16 for YouTube Shorts links, 16:9 for other YouTube links, and a video file's own shape */
   aspect?: "auto" | "wide" | "vertical";
   /** start playing when the video opens (a YouTube embed also starts muted, which browsers require) */
@@ -69,13 +71,13 @@ function youtubeParser(url: string): string | null {
   return match && match[1].length === 11 ? match[1] : null;
 }
 
-const youtubeId = computed(() => youtubeParser(props.src));
-const isShort = computed(() => props.src.includes("/shorts/"));
+const youtubeId = computed(() => (props.youtubeSrc ? youtubeParser(props.youtubeSrc) : null));
+const isShort = computed(() => !!props.youtubeSrc?.includes("/shorts/"));
 
 // an embed link keeps its own parameters (it has to be a full URL) and any other YouTube link becomes an embed;
 // then rel=0, playsinline=1 and, with autoplay on, autoplay=1&mute=1 are added unless the link already sets them
 const embedUrl = computed(() => {
-  let embed = props.src;
+  let embed = props.youtubeSrc ?? "";
   if (!embed.includes("/embed/")) {
     embed = `https://www.youtube.com/embed/${youtubeId.value}`;
   }
