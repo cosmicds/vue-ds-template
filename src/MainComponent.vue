@@ -74,18 +74,6 @@
               size="lg"
             >
             </icon-button>
-            <!-- we use a .icon-wrapper.tonal declaration to override
-             the styles to sorta mimic a v-btn[variant=tonal] -->
-            <icon-button
-              v-model="showShort"
-              icon="mdi-youtube"
-              ariaLabel="Watch short"
-              :color="accentColor"
-              tooltip-text="Watch short"
-              tooltip-location="start"
-              size="lg"
-            >
-            </icon-button>
           </div>
           <div id="center-buttons"></div>
           <div id="right-buttons"></div>
@@ -226,7 +214,6 @@ const showSplashScreen = ref(splash);
 const backgroundImagesets = reactive<BackgroundImageset[]>([]);
 
 const showVideo = ref(false);
-const showShort = ref(false);
 
 const showWebGL2Warning = ref(false);
 
