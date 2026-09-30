@@ -10,16 +10,15 @@
         <p>
           <strong>This app requires WebGL 2</strong>
         </p>
+        <p class="mt-2">Check your browser's settings and enable WebGL 2 ("graphics acceleration" on some browsers).</p>
         <p class="mt-2">
-          Check your browser's settings and enable WebGL 2 ("graphics acceleration" on some browsers).
-        </p>
-        <p class="mt-2">
-          You can check whether your browser supports WebGL 2
-          and get assistance <a
+          You can check whether your browser supports WebGL 2 and get assistance
+          <a
             href="https://get.webgl.org/webgl2/"
             target="_blank"
             rel="noopener noreferrer"
-          >here</a>.
+            >here</a
+          >.
         </p>
       </div>
     </v-card>

@@ -20,7 +20,6 @@ import {
   faLightbulb,
   faSignsPost,
   faHouse,
-
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(faBookOpen);
@@ -33,15 +32,13 @@ library.add(faLightbulb);
 library.add(faSignsPost);
 library.add(faHouse);
 
-
 /** v-hide directive taken from https://www.ryansouthgate.com/2020/01/30/vue-js-v-hide-element-whilst-keeping-occupied-space/ */
 // Extract the function out, up here, so I'm not writing it twice
-const update = (el: HTMLElement, binding: DirectiveBinding) => el.style.visibility = (binding.value) ? "hidden" : "";
+const update = (el: HTMLElement, binding: DirectiveBinding) => (el.style.visibility = binding.value ? "hidden" : "");
 
 createApp(MainComponent, {
-  wwtNamespace: "vue-ds-template"
+  wwtNamespace: "vue-ds-template",
 })
-
   // Plugins
   .use(wwtPinia as unknown as Plugin<[]>)
   .use(vuetify)
@@ -52,9 +49,10 @@ createApp(MainComponent, {
   // Directives
   .directive(
     /**
-    * Hides an HTML element, keeping the space it would have used if it were visible (css: Visibility)
-    */
-    "hide", {
+     * Hides an HTML element, keeping the space it would have used if it were visible (css: Visibility)
+     */
+    "hide",
+    {
       // Run on initialisation (first render) of the directive on the element
       beforeMount(el, binding, _vnode, _prevVnode) {
         update(el, binding);
@@ -62,8 +60,9 @@ createApp(MainComponent, {
       // Run on subsequent updates to the value supplied to the directive
       updated(el, binding, _vnode, _prevVnode) {
         update(el, binding);
-      }
-    })
+      },
+    },
+  )
 
   // Mount
   .mount("#app-mount");

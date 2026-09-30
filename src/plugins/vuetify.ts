@@ -13,8 +13,6 @@ import { en } from "vuetify/locale";
 import "vuetify/styles";
 import "@mdi/font/css/materialdesignicons.css";
 
-
-
 // CosmicDS colors
 export const COSMICDS_COLORS = {
   "cosmicds-red": "#E60001",
@@ -26,15 +24,15 @@ export const COSMICDS_COLORS = {
 export default createVuetify({
   // Icon Fonts
   icons: {
-    defaultSet: 'mdi',
+    defaultSet: "mdi",
     aliases,
     sets: {
       mdi,
     },
   },
   locale: {
-    locale: 'en',
-    fallback: 'en',
+    locale: "en",
+    fallback: "en",
     messages: { en },
   },
   theme: {
@@ -82,7 +80,8 @@ export default createVuetify({
       },
 
       /** custom theme, based on vuetify dark */
-      custom: { // because this is dark: true, anything not defined falls back to the dark theme above
+      custom: {
+        // because this is dark: true, anything not defined falls back to the dark theme above
         dark: true,
         colors: {
           // we often use accent and accent2 (or the old template had button color)

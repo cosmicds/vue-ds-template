@@ -3,7 +3,6 @@
     class="splash-overlay"
     :model-value="showSplashScreen"
     :scrim="false"
-
     absolute
     :style="cssVars"
     transition="fade-transition"
@@ -33,7 +32,7 @@
             @click="closeSplashScreen"
             @keyup.enter="closeSplashScreen"
           >
-            {{ props.loaded ? 'Get Started' : 'Loading...' }}
+            {{ props.loaded ? "Get Started" : "Loading..." }}
           </v-btn>
         </div>
 
@@ -45,12 +44,16 @@
                 href="https://www.cosmicds.cfa.harvard.edu/"
                 target="_blank"
                 rel="noopener"
-              >Cosmic Data Stories</a> and
+                >Cosmic Data Stories</a
+              >
+              and
               <a
                 href="https://www.worldwidetelescope.org/home/"
                 target="_blank"
                 rel="noopener"
-              >WorldWide Telescope</a>.
+              >
+                WorldWide Telescope </a
+              >.
             </p>
           </slot>
           <div class="splash-logos">
@@ -76,56 +79,56 @@
   </v-overlay>
 </template>
 
-
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 import { FocusTrap } from "focus-trap-vue";
 import { CreditLogos } from "@cosmicds/vue-toolkit";
 
-const cfaExtraLogo = [{
-  src: "./CfA_Logo_Vertical_Reverse.png",
-  href: 'https://www.cfa.harvard.edu/',
-  alt: 'Center for Astrophysics | Harvard & Smithsonian Logo',
-  name: 'cfa',
-}];
+const cfaExtraLogo = [
+  {
+    src: "./CfA_Logo_Vertical_Reverse.png",
+    href: "https://www.cfa.harvard.edu/",
+    alt: "Center for Astrophysics | Harvard & Smithsonian Logo",
+    name: "cfa",
+  },
+];
 
 export interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  cssVars?: Record<string, any>,
-  color?: string,
-  highlightColor?: string,
-  loaded?: boolean,
+  cssVars?: Record<string, any>;
+  color?: string;
+  highlightColor?: string;
+  loaded?: boolean;
   /** an optional background image. this will go into a css url(<background>)
    * If in public: ./background.jpg, if in src: @/assets/background.jpg
    */
-  backgroundImage?: string,
+  backgroundImage?: string;
   /** hide the built-in "Get Started" button, e.g. when your own slot content has its own CTA */
-  hideButton?: boolean,
+  hideButton?: boolean;
   /** on a small screen ( < 310px wide), cover the
    * whole viewport instead of floating as a bordered card */
-  fullscreenOnSmall?: boolean,
+  fullscreenOnSmall?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   cssVars: () => ({}),
   loaded: true,
-  color: 'white',
-  highlightColor: 'white'
+  color: "white",
+  highlightColor: "white",
 });
 
 const cssVars = computed(() => {
   return {
     ...props.cssVars,
-    '--accent-color': props.color,
-    '--background-image': props.backgroundImage ? `url("${props.backgroundImage}")` : 'none',
-    '--background-opacity': props.backgroundImage ? 1 : 0.5,
+    "--accent-color": props.color,
+    "--background-image": props.backgroundImage ? `url("${props.backgroundImage}")` : "none",
+    "--background-opacity": props.backgroundImage ? 1 : 0.5,
   };
 });
 
-const emits = defineEmits(['close']);
+const emits = defineEmits(["close"]);
 
 const showSplashScreen = defineModel<boolean>({ default: true });
-
 
 // watch(() => props.loaded, (l) =>{
 //   if (l) {
@@ -135,33 +138,30 @@ const showSplashScreen = defineModel<boolean>({ default: true });
 //   }
 // })
 
-
 function closeSplashScreen() {
   showSplashScreen.value = false;
-  emits('close');
+  emits("close");
 }
-
-
 </script>
 
-
 <style lang="less">
-
 .splash-overlay {
   align-items: center;
   justify-content: center;
-  // fluid type/spacing 
+  // fluid type/spacing
   // https://piccalil.li/blog/fluid-typography-with-css-clamp/,
   // https://www.kevinpowell.co/article/typographic-scale/. also see Scott
   --scale: 1.3333; // perfect fourth
   --fs-0: min(9vw, 6vh); // title / lead-in - .splash-overlay's font-size, inherited
   --fs-1: calc(var(--fs-0) / var(--scale)); // description
   --fs-2: calc(var(--fs-1) / var(--scale)); // button label
-  --fs-3: calc(var(--fs-2) / var(--scale)); 
-  --fs-4: calc(var(--fs-3) / var(--scale)); 
+  --fs-3: calc(var(--fs-2) / var(--scale));
+  --fs-4: calc(var(--fs-3) / var(--scale));
   --fs-5: calc(var(--fs-4) / var(--scale)); // credits line
   font-size: var(--fs-0);
-  transition: width 0.5s, height 0.5s;
+  transition:
+    width 0.5s,
+    height 0.5s;
 }
 
 .v-fade-transition-enter-active,
@@ -184,7 +184,7 @@ function closeSplashScreen() {
   --border-max: 6px;
   --border-min: 2px;
   --border-thickness: clamp(var(--border-min), 0.4vmax, var(--border-max));
-  
+
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -196,14 +196,12 @@ function closeSplashScreen() {
   --panel-padding-inline: clamp(8px, 2vw, 2rem);
   padding-inline: var(--panel-padding-inline);
 
-
   border-radius: var(--border-radius);
   border: var(--border-thickness) solid var(--accent-color);
   overflow: auto;
   // switch the fallback fonts to serif for debugging
-  font-family: 'Highway Gothic Narrow', 'Roboto', sans-serif;
-  
-  
+  font-family: "Highway Gothic Narrow", "Roboto", sans-serif;
+
   .background {
     position: fixed;
     inset: 0;
@@ -230,8 +228,6 @@ function closeSplashScreen() {
     border-radius: var(--border-radius);
   }
 
-  
-
   div {
     margin-inline: auto;
     text-align: center;
@@ -248,7 +244,7 @@ function closeSplashScreen() {
     font-weight: normal;
     line-height: 1.4;
   }
-  
+
   // lead-in above the title, e.g. "Explore" before "THE NIGHT SKY" - same
   // size as the title, differs only by weight
   .splash-lead {
@@ -266,13 +262,11 @@ function closeSplashScreen() {
     font-weight: bold;
   }
 
-
-
   // "brought to you by..." - placed above the logos, matching the fleet.
   // named splash-credits, not "small" - this file is unscoped
   .splash-credits {
     font-size: var(--fs-4);
-    font-weight:normal;
+    font-weight: normal;
     margin-block: 0.4em;
   }
 
@@ -318,18 +312,14 @@ function closeSplashScreen() {
     justify-content: center;
   }
 
-
-
   .splash-credit-logos {
-    
     // don't wrap the logos - if they don't fit then shrink them
     // so we have to overrid #icons-container from CreditLogos
     #icons-container {
       white-space: nowrap;
       width: fit-content;
     }
-    
-    
+
     img {
       vertical-align: middle;
       margin-inline: 0.2em;
@@ -350,7 +340,6 @@ function closeSplashScreen() {
     }
   }
 
-
   @media (max-height: 500px) {
     overflow: hidden;
 
@@ -363,8 +352,8 @@ function closeSplashScreen() {
     gap: 0.25em;
     padding-block: 0.5rem;
 
-    // use this instead of v-if. the images still load though, but 
-    // lets me get rid of the extra js. 
+    // use this instead of v-if. the images still load though, but
+    // lets me get rid of the extra js.
     .splash-acknowledgements {
       display: none;
     }
@@ -384,5 +373,4 @@ function closeSplashScreen() {
     }
   }
 }
-
 </style>

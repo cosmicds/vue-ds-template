@@ -66,7 +66,7 @@ const showVideoSheet = defineModel<boolean>({ default: false });
 function youtubeParser(url: string): string | null {
   const regExp = /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=)([^#&?]*).*/;
   const match = url.match(regExp);
-  return (match && match[1].length === 11) ? match[1] : null;
+  return match && match[1].length === 11 ? match[1] : null;
 }
 
 const youtubeId = computed(() => youtubeParser(props.src));
@@ -116,8 +116,7 @@ const cssVars = computed(() => ({ "--video-aspect": videoAspect.value }));
 </script>
 
 <style lang="less">
-.video-wrapper
-{
+.video-wrapper {
   position: relative;
   display: flex;
   padding: 10px;
@@ -130,8 +129,7 @@ const cssVars = computed(() => ({ "--video-aspect": videoAspect.value }));
   // border: 1px solid white;
 }
 
-#video-close-icon
-{
+#video-close-icon {
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -140,8 +138,7 @@ const cssVars = computed(() => ({ "--video-aspect": videoAspect.value }));
 }
 
 video,
-#info-video
-{
+#info-video {
   margin: auto;
   width: min(95%, calc(90vh * var(--video-aspect, 1.7778)));
   height: auto;
@@ -149,8 +146,7 @@ video,
   object-fit: contain;
 }
 
-#video-container
-{
+#video-container {
   position: absolute;
   top: 0;
   left: 0;

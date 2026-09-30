@@ -6,13 +6,8 @@
   >
     <webgl-test @webgl2-disabled="showWebGL2Warning = true" />
 
-    <div
-      id="main-content"
-    >
-      <WorldWideTelescope
-        :wwt-namespace="wwtNamespace"
-      ></WorldWideTelescope>
-
+    <div id="main-content">
+      <WorldWideTelescope :wwt-namespace="wwtNamespace"></WorldWideTelescope>
 
       <!-- This contains the splash screen content -->
 
@@ -26,20 +21,13 @@
           <!-- the text styling comes through the a plain p-tag css selector 
             .splash-lead and .hightlight get larger fonts, and highlight gets accentColor
            -->
-          <p class="splash-lead">
-            Explore
-          </p>
-          <p class="highlight">
-            the night sky
-          </p>
-          <p>
-            &amp; let it inspire you to dare to do mighty things. it's reading rainbow
-          </p>
+          <p class="splash-lead">Explore</p>
+          <p class="highlight">the night sky</p>
+          <p>&amp; let it inspire you to dare to do mighty things. it's reading rainbow</p>
         </div>
       </SplashScreen>
 
       <wwt-loader v-model="isLoading" />
-
 
       <!-- This block contains the elements (e.g. icon buttons displayed at/near the top of the screen) -->
 
@@ -86,10 +74,8 @@
             >
             </icon-button>
           </div>
-          <div id="center-buttons">
-          </div>
-          <div id="right-buttons">
-          </div>
+          <div id="center-buttons"></div>
+          <div id="right-buttons"></div>
         </div>
 
         <div id="bottom-content">
@@ -102,7 +88,6 @@
           />
         </div>
       </div>
-
 
       <!-- This dialog contains the video that is displayed when the video icon is clicked -->
 
@@ -118,7 +103,6 @@
         src="https://youtube.com/shorts/-4kALiBHA5Y?si=Cse3ujkEkx49B3al"
       />
     </div>
-
 
     <!--
     This contains the informational content that is displayed when the book icon is clicked.
@@ -157,9 +141,7 @@
         <info-page title="Information">
           <!-- we generally use heading level 3 (the same level as the tabs) -->
           <h3>Science Information</h3>
-          <p>
-            Learn some cool science facts
-          </p>
+          <p>Learn some cool science facts</p>
         </info-page>
 
         <user-guide />
@@ -190,12 +172,14 @@ import InfoPage from "./components/InfoPage.vue";
 import UserGuide from "./components/UserGuide.vue";
 import { useAppLayout } from "./composables/useAppLayout";
 
-const extraLogos = [{
-  src: "./CfA_Logo_Vertical_Reverse.png",
-  href: "https://www.cfa.harvard.edu/",
-  alt: "Center for Astrophysics | Harvard & Smithsonian Logo",
-  name: "cfa",
-}];
+const extraLogos = [
+  {
+    src: "./CfA_Logo_Vertical_Reverse.png",
+    href: "https://www.cfa.harvard.edu/",
+    alt: "Center for Astrophysics | Harvard & Smithsonian Logo",
+    name: "cfa",
+  },
+];
 
 export interface MainComponentProps {
   wwtNamespace?: string;
@@ -214,7 +198,7 @@ withDefaults(defineProps<MainComponentProps>(), {
 const initialCameraParams = {
   raRad: 0,
   decRad: 0,
-  zoomDeg: 60
+  zoomDeg: 60,
 } as Omit<GotoRADecZoomParams, "instant">;
 
 const splash = new URLSearchParams(window.location.search).get("splash")?.toLowerCase() !== "false";
@@ -226,7 +210,7 @@ const showShort = ref(false);
 
 const showWebGL2Warning = ref(false);
 
-import {useTheme, useDisplay} from "vuetify";
+import { useTheme, useDisplay } from "vuetify";
 const theme = useTheme();
 // in the past we have used accentColor and accentColor2, but these serve the same purpose
 // as vuetify's primary and secondary colors, so we tie them to that. vuetify components
@@ -236,21 +220,22 @@ const accentColor2 = computed(() => theme.current.value.colors.secondary);
 
 const { xs } = useDisplay();
 
-
 onMounted(() => {
   if (showWebGL2Warning.value) {
     showSplashScreen.value = false;
     WWTControl.singleton.canvas.setAttribute("hidden", "true");
-    WWTControl.singleton.renderOneFrame = function() {};
+    WWTControl.singleton.renderOneFrame = function () {};
     return;
   }
 
   store.waitForReady().then(async () => {
-    skyBackgroundImagesets.forEach(iset => backgroundImagesets.push(iset));
-    store.gotoRADecZoom({
-      ...initialCameraParams,
-      instant: true
-    }).then(() => positionSet.value = true);
+    skyBackgroundImagesets.forEach((iset) => backgroundImagesets.push(iset));
+    store
+      .gotoRADecZoom({
+        ...initialCameraParams,
+        instant: true,
+      })
+      .then(() => (positionSet.value = true));
 
     // If there are layers to set up, do that here!
     layersLoaded.value = true;
@@ -272,10 +257,9 @@ const cssVars = computed(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ["--accent-color" as any]: accentColor.value,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ["--accent-color-2" as any]: accentColor2.value
+    ["--accent-color-2" as any]: accentColor2.value,
   } as StyleValue;
 });
-
 
 /**
   Computed flags that control whether the relevant dialogs display.
@@ -313,13 +297,12 @@ function closeSplashScreen() {
   // outline: 4px double white;
   // box-shadow: 0 0 0 2px black;
   outline: none; /* outline needs to be none to override the broswer */
-  box-shadow: 
-    inset 0 0 0 2px white,  /* from -2 to 0*/
-    0 0 0 3px #0B5CB3, /* from 0 to 3 -  */
-    0 0 0 5px white; /* from 0 to 5 */
-  border-radius: .125rem;
+  box-shadow:
+    inset 0 0 0 2px white,
+    /* from -2 to 0*/ 0 0 0 3px #0b5cb3,
+    /* from 0 to 3 -  */ 0 0 0 5px white; /* from 0 to 5 */
+  border-radius: 0.125rem;
 }
-
 
 html {
   height: 100%;
@@ -328,7 +311,6 @@ html {
   background-color: #000;
   overflow: hidden;
 
-  
   -ms-overflow-style: none;
   // scrollbar-width: none;
 }
@@ -363,7 +345,6 @@ body {
   overscroll-behavior: none;
   font-size: 11pt;
 }
-
 
 // WWT fills #main-content, which gets its size from the flex layout above.
 // This breaks if #main-content stops having a definite size from layout.
@@ -401,7 +382,6 @@ body {
   isolation: isolate;
 }
 
-
 #top-content {
   width: 100%;
   pointer-events: auto;
@@ -433,9 +413,9 @@ body {
   pointer-events: auto;
   align-items: flex-end;
   gap: 5px;
-  
+
   // neither #logo-credits nor #icons-container are flex
-  #logo-credits > #icons-container{
+  #logo-credits > #icons-container {
     a {
       margin-inline: 0.3em;
     }
@@ -443,7 +423,7 @@ body {
 }
 
 .icon-wrapper {
-  // give us circles. 
+  // give us circles.
   border-radius: 50% !important;
   aspect-ratio: 1/1;
   // even padding
@@ -461,7 +441,6 @@ body {
   background-color: rgba(var(--v-theme-primary), 0.6) !important;
   color: rgba(var(--v-theme-primary), 1) !important;
 }
-
 
 /** ====== Define our standard Side/Bottom panel layout
 The default DOM structure is basically
@@ -486,7 +465,6 @@ The default DOM structure is basically
 #app.app-side-panel > .v-application__wrap {
   flex-direction: row;
 }
-
 
 // side-panel layout: #side-drawer follows #main-content in the DOM,
 // so flipping the order is what puts the panel on the left of the view
@@ -533,7 +511,9 @@ The default DOM structure is basically
 // Basic text styling for the InformationSheet's content - simpler to set
 // here globally than to thread a heading-color prop through.
 .cds-info-sheet .info-text {
-  h3, h4, h5 {
+  h3,
+  h4,
+  h5 {
     color: steelblue;
   }
 }

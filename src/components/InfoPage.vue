@@ -2,7 +2,7 @@
   <v-window-item
     :value="tabValue"
     class="flex-grow-1 info-page"
-    :class="[`info-page-${tabValue}`, {'info-page-active': _isActive}]"
+    :class="[`info-page-${tabValue}`, { 'info-page-active': _isActive }]"
     :style="cssVars"
   >
     <div class="info-text">
@@ -17,22 +17,23 @@ import { inject, computed, onUnmounted } from "vue";
 import { injectionKey } from "./InformationSheet.vue";
 
 const props = defineProps<{
-    title: string,
-    value?: string,
-    bgColor?: string | undefined,
-  }>();
+  title: string;
+  value?: string;
+  bgColor?: string | undefined;
+}>();
 
-const cssVars = computed(() => (props.bgColor ? { '--info-sheet-page-bg': props.bgColor } : {}));
+const cssVars = computed(() => (props.bgColor ? { "--info-sheet-page-bg": props.bgColor } : {}));
 
 const tabsProvider = inject(injectionKey, null);
 if (!tabsProvider?.withinTabs) {
-  throw new Error('InformationPage must be used within an InformationSheet');
+  throw new Error("InformationPage must be used within an InformationSheet");
 }
 
-const kebabCase = (str: string) => str
-  .replace(/([a-z])([A-Z])/g, "$1-$2")
-  .replace(/[\s_]+/g, '-')
-  .toLowerCase();
+const kebabCase = (str: string) =>
+  str
+    .replace(/([a-z])([A-Z])/g, "$1-$2")
+    .replace(/[\s_]+/g, "-")
+    .toLowerCase();
 
 const tabValue = props.value ?? kebabCase(props.title);
 
@@ -49,7 +50,6 @@ onUnmounted(() => {
   }
 });
 </script>
-
 
 <!-- we also make sure they are "scoped" by specifying them as children of cds-info-sheet belonging in the cds-info-sheet  -->
 <style scoped lang="less">

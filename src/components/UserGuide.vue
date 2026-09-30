@@ -1,14 +1,13 @@
 <!-- The User Guide tab's content, lifted out of InformationSheet.vue when that
      moved to why-roman's tab-registration structure. Same content as before. -->
 <template>
-  <InfoPage title="User Guide" value="user-guide">
+  <InfoPage
+    title="User Guide"
+    value="user-guide"
+  >
     <div class="d-flex flex-column fill-height">
-      <h4 class="user-guide-header mt-5">
-        Sky Navigation
-      </h4>
-      <p>
-        To navigate the WWT view, use the following controls:
-      </p>
+      <h4 class="user-guide-header mt-5">Sky Navigation</h4>
+      <p>To navigate the WWT view, use the following controls:</p>
       <v-row
         align-content="center"
         dense
@@ -28,7 +27,7 @@
           class="pt-1"
         >
           <strong>{{ touchscreen ? "press + drag" : "click + drag" }}</strong> {{ touchscreen ? "" : "or" }}
-          <strong>{{ touchscreen ? "" : "W-A-S-D" }}</strong> {{ touchscreen ? "" : "keys" }}<br>
+          <strong>{{ touchscreen ? "" : "W-A-S-D" }}</strong> {{ touchscreen ? "" : "keys" }}<br />
         </v-col>
       </v-row>
       <v-row
@@ -49,8 +48,8 @@
           cols="8"
           class="pt-1"
         >
-          <strong>{{ touchscreen ? "pinch in and out" : "scroll in and out" }}</strong> {{ touchscreen ? "" :
-            "or" }} <strong>{{ touchscreen ? "" : "I-O" }}</strong> {{ touchscreen ? "" : "keys" }}<br>
+          <strong>{{ touchscreen ? "pinch in and out" : "scroll in and out" }}</strong> {{ touchscreen ? "" : "or" }}
+          <strong>{{ touchscreen ? "" : "I-O" }}</strong> {{ touchscreen ? "" : "keys" }}<br />
         </v-col>
       </v-row>
       <v-row
@@ -71,9 +70,9 @@
           cols="8"
           class="pt-1"
         >
-          {{ touchscreen ? "" : "press" }} <strong>{{ touchscreen ? "pinch and twist" : "control + click + drag"
-          }}</strong> {{ touchscreen ? "" : "" }} <strong>{{ touchscreen ? "" : "" }}</strong> {{ touchscreen
-            ? "" : "" }}<br>
+          {{ touchscreen ? "" : "press" }}
+          <strong>{{ touchscreen ? "pinch and twist" : "control + click + drag" }}</strong> {{ touchscreen ? "" : "" }}
+          <strong>{{ touchscreen ? "" : "" }}</strong> {{ touchscreen ? "" : "" }}<br />
         </v-col>
       </v-row>
 
@@ -81,16 +80,12 @@
       <v-row>
         <v-col cols="12">
           <div class="credits">
-            <h4 class="user-guide-header mt-3">
-              Credits
-            </h4>
+            <h4 class="user-guide-header mt-3">Credits</h4>
             <h5>
               <easyLink href="https://www.cosmicds.cfa.harvard.edu/">Science Reference</easyLink>
             </h5>
             <p>Science PI</p>
-            <p>
-              Data and Catalog References. 
-            </p>
+            <p>Data and Catalog References.</p>
             <h5>
               <easyLink href="https://www.cosmicds.cfa.harvard.edu/">CosmicDS</easyLink>
             </h5>
@@ -109,7 +104,8 @@
           <v-spacer class="end-spacer"></v-spacer>
         </v-col>
       </v-row>
-      <v-row class="mt-auto"> <!-- pinned to the bottom of the sheet -->
+      <v-row class="mt-auto">
+        <!-- pinned to the bottom of the sheet -->
         <v-col>
           <funding-acknowledgement />
         </v-col>
@@ -119,13 +115,13 @@
 </template>
 
 <script setup lang="ts">
-import { h, type SetupContext } from 'vue';
-import { supportsTouchscreen, FundingAcknowledgement } from '@cosmicds/vue-toolkit';
-import InfoPage from './InfoPage.vue';
+import { h, type SetupContext } from "vue";
+import { supportsTouchscreen, FundingAcknowledgement } from "@cosmicds/vue-toolkit";
+import InfoPage from "./InfoPage.vue";
 
 // https://v3-migration.vuejs.org/breaking-changes/functional-components
 const easyLink = (props: { href: string }, { slots }: SetupContext) => {
-  return h('a', { href: props.href, target: '_blank', rel: "noopener" }, slots.default?.());
+  return h("a", { href: props.href, target: "_blank", rel: "noopener" }, slots.default?.());
 };
 
 const touchscreen = supportsTouchscreen();
@@ -136,8 +132,6 @@ const touchscreen = supportsTouchscreen();
 .end-spacer {
   height: 25px;
 }
-
-
 
 .v-row {
   flex-grow: 0;
