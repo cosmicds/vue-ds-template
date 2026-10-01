@@ -1,5 +1,5 @@
-const { argv, exit } = require("process");
-const { updatePackageData } = require("./utils");
+import { argv, exit } from "process";
+import { updatePackageData } from "./utils.js";
 
 const name = argv[2];
 if (!name) {
@@ -7,7 +7,7 @@ if (!name) {
   exit(1);
 }
 
-updatePackageData((data) => {
+await updatePackageData((data) => {
   data.name = name;
   return data;
 });

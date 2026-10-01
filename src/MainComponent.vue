@@ -1,327 +1,269 @@
 <template>
-<v-app
-  id="app"
-  :style="cssVars"
->
-  <div
-    id="main-content"
+  <v-app
+    id="app"
+    :style="cssVars"
+    :class="[smallSize ? 'app-is-small' : '', sidePanel ? 'app-side-panel' : '']"
   >
-    <WorldWideTelescope
-      :wwt-namespace="wwtNamespace"
-    ></WorldWideTelescope>
-
-
+    <webgl-test @webgl2-disabled="showWebGL2Warning = true" />
+    
     <!-- This contains the splash screen content -->
-
-    <v-overlay
-      :model-value="showSplashScreen"
-      absolute
-      opacity="0.6"
-      :style="cssVars"
-      id="splash-overlay"
+     
+    <SplashScreen
+      v-model="showSplashScreen"
+      :color="accentColor"
+      fullscreen-on-small
+      @close="closeSplashScreen"
     >
-      <div
-        id="splash-screen"
-        v-click-outside="closeSplashScreen"
-        :style="cssVars"
-      >
-        <font-awesome-icon
-          id="close-splash-button"
-          @click="closeSplashScreen"
-          @keyup.enter="closeSplashScreen"
-          icon="xmark"
-          tabindex="0"
-        />
-        <div id="splash-screen-text">
-          <p>Splash Screen Content</p>
-        </div>
-        <div id="splash-screen-acknowledgements" class="small">
-          This Data Story is brought to you by <a href="https://www.cosmicds.cfa.harvard.edu/" target="_blank" rel="noopener noreferrer">Cosmic Data Stories</a> and <a href="https://www.worldwidetelescope.org/home/" target="_blank" rel="noopener noreferrer">WorldWide Telescope</a>.
-          
-          <div id="splash-screen-logos">
-            <credit-logos logo-size="5vmin"/>
-          </div>
-        </div>
+      <div class="splash-content">
+        <!-- the text styling comes through the a plain p-tag css selector 
+          .splash-lead and .hightlight get larger fonts, and highlight gets accentColor
+          -->
+        <p class="splash-lead">Explore</p>
+        <p class="highlight">the night sky</p>
+        <p>&amp; let it inspire you to dare to do mighty things. it's reading rainbow</p>
       </div>
-    </v-overlay>
-
-    <transition name="fade">
-      <div
-        class="modal"
-        id="modal-loading"
-        v-show="isLoading"
-      >
-        <div class="container">
-          <div class="spinner"></div>
-          <p>Loading …</p>
-        </div>
-      </div>
-    </transition>
-
-
-    <!-- This block contains the elements (e.g. icon buttons displayed at/near the top of the screen -->
-
-    <div id="top-content">
-      <div id="left-buttons">
-        <icon-button
-          v-model="showTextSheet"
-          fa-icon="book-open"
-          :color="buttonColor"
-          :tooltip-text="showTextSheet ? 'Hide Info' : 'Learn More'"
-          tooltip-location="start"
-        >
-        </icon-button>
-        <icon-button
-          v-model="showVideoSheet"
-          fa-icon="video"
-          :color="buttonColor"
-          tooltip-text="Watch video"
-          tooltip-location="start"
-        >
-        </icon-button>
-      </div>
-      <div id="center-buttons">
-      </div>
-      <div id="right-buttons">
-      </div>
-    </div>
-
-
-    <!-- This block contains the elements (e.g. the project icons) displayed along the bottom of the screen -->
-
-    <div id="bottom-content">
-      <div id="body-logos" v-if= "!smallSize">
-        <credit-logos/>
-      </div>
-    </div>
-
-
+    </SplashScreen>
+    
     <!-- This dialog contains the video that is displayed when the video icon is clicked -->
+    <!-- 
+      passing a youtube url to youtube-src instead will show a youtube video. 
+      pass aspect= "wide" or "vertical" to force 16:9 (wide or vertical) aspect ratio. 
+      -->
+    <VideoWrapper
+      v-model="showVideo"
+      video-src="./test-video-vertical.mp4"
+    />
 
-    <v-dialog
-      id="video-container"
-      v-model="showVideoSheet"
-      transition="slide-y-transition"
-      fullscreen
-    >
-      <div class="video-wrapper">
-        <font-awesome-icon
-          id="video-close-icon"
-          class="close-icon"
-          icon="times"
-          size="lg"
-          @click="showVideoSheet = false"
-          @keyup.enter="showVideoSheet = false"
-          tabindex="0"
-        ></font-awesome-icon>
-        <video
-          controls
-          id="info-video"
-        >
-          <source src="" type="video/mp4">
-        </video>
+
+    <div id="main-content">
+      <WorldWideTelescope :wwt-namespace="wwtNamespace"></WorldWideTelescope>
+      <wwt-loader v-model="isLoading" />
+
+      <!-- This block contains the elements (e.g. icon buttons displayed at/near the top of the screen) -->
+
+      <div v-show="!showSplashScreen" id="wwt-overlay">
+        
+        <div id="top-content">
+          <div id="left-buttons">
+            <!-- icon-buttons default to size="1em"
+             id's and classes will be added to the .icon-wrapper
+             it uses slotted styles so it's specificiy is (0,2,0)
+              -->
+            <icon-button
+              v-model="showTextSheet"
+              icon="question"
+              :ariaLabel="showTextSheet ? 'Hide Info' : 'Learn More'"
+              :color="accentColor"
+              :tooltip-text="showTextSheet ? 'Hide Info' : 'Learn More'"
+              tooltip-location="start"
+              size="lg"
+            >
+            </icon-button>
+            <icon-button
+              v-model="showVideo"
+              icon="video"
+              ariaLabel="Watch video"
+              :color="accentColor"
+              tooltip-text="Watch video"
+              tooltip-location="start"
+              size="lg"
+            >
+            </icon-button>
+          </div>
+          <div id="center-buttons"></div>
+          <div id="right-buttons"></div>
+        </div>
+
+        <div id="bottom-content">
+          <!-- credit logos id=logo-credits -->
+          <credit-logos
+            v-if="!xs"
+            :default-logos="['cosmicds', 'wwt', 'nasa']"
+            :logo-size="xs ? '2em' : '2.5em'"
+            :extra-logos="extraLogos"
+          />
+        </div>
       </div>
-    </v-dialog>
+    </div>
 
+    <!--
+    This contains the informational content that is displayed when the book icon is clicked.
+    It's an in-flow flex sibling of #main-content, so opening it shrinks the WWT view
+    (from the side normally, from the bottom on small screens) instead of covering it.
+  -->
 
-    <!-- This dialog contains the informational content that is displayed when the book icon is clicked -->
-
-    <v-dialog
-      :style="cssVars"
-      :class="['info-sheet', `info-sheet-${infoSheetLocation}`]"
-      id="text-info-sheet"
-      hide-overlay
-      persistent
-      no-click-animation
-      absolute
-      :scrim="false"
-      location="bottom"
-      v-model="showTextSheet"
-      :transition="infoSheetTransition"
+    <div
+      v-show="!showSplashScreen"
+      id="drawer"
+      :class="[sidePanel ? 'info-side' : 'info-bottom', showTextSheet ? 'drawer-open' : 'drawer-closed']"
     >
-      <v-card height="100%">
-        <v-tabs
-          v-model="tab"
-          height="32px"
-          :color="accentColor"
-          :slider-color="accentColor"
-          id="tabs"
-          dense
-        >
-          <v-tab class="info-tabs" tabindex="0"><h3>Information</h3></v-tab>
-          <v-tab class="info-tabs" tabindex="0"><h3>Using WWT</h3></v-tab>
-        </v-tabs>
-        <font-awesome-icon
-          id="close-text-icon"
-          class="control-icon"
-          icon="times"
-          size="lg"
-          @click="showTextSheet = false"
-          @keyup.enter="showTextSheet = false"
-          tabindex="0"
-        ></font-awesome-icon>
-        <v-window v-model="tab" id="tab-items" class="pb-2 no-bottom-border-radius">
-          <v-window-item>
-            <v-card class="no-bottom-border-radius scrollable">
-              <v-card-text class="info-text no-bottom-border-radius">
-                Information goes here
-                <v-spacer class="end-spacer"></v-spacer>
-              </v-card-text>
-            </v-card>
-          </v-window-item>
-          <v-window-item>
-            <v-card class="no-bottom-border-radius scrollable">
-              <v-card-text class="info-text no-bottom-border-radius">
-                <v-container>
-                  <v-row align="center">
-                  <v-col cols="4">
-                      <v-chip
-                        label
-                        outlined
-                      >
-                        Pan
-                      </v-chip>
-                    </v-col>
-                    <v-col cols="8" class="pt-1">
-                      <strong>{{ touchscreen ? "press + drag" : "click + drag" }}</strong>  {{ touchscreen ? ":" : "or" }}  <strong>{{ touchscreen ? ":" : "W-A-S-D" }}</strong> {{ touchscreen ? ":" : "keys" }}<br>
-                    </v-col>
-                  </v-row>
-                  <v-row align="center">
-                    <v-col cols="4">
-                      <v-chip
-                        label
-                        outlined
-                      >
-                        Zoom
-                      </v-chip>
-                    </v-col>
-                    <v-col cols="8" class="pt-1">
-                      <strong>{{ touchscreen ? "pinch in and out" : "scroll in and out" }}</strong> {{ touchscreen ? ":" : "or" }} <strong>{{ touchscreen ? ":" : "I-O" }}</strong> {{ touchscreen ? ":" : "keys" }}<br>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col cols="12">
-                      <div class="credits">
-                      <h3>Credits:</h3>
-                      <h4><a href="https://www.cosmicds.cfa.harvard.edu/" target="_blank" rel="noopener noreferrer">CosmicDS</a> Vue Data Stories Team:</h4>
-                      John Lewis<br>
-                      Jon Carifio<br>
-                      Pat Udomprasert<br>
-                      Alyssa Goodman<br>
-                      Mary Dussault<br>
-                      Harry Houghton<br>
-                      Anna Nolin<br>
-                      Evaluator: Sue Sunbury<br>
-                      <br>
-                      <h4>WorldWide Telescope Team:</h4>
-                      Peter Williams<br>
-                      A. David Weigel<br>
-                      Jon Carifio<br>
-                      </div>
-                      <v-spacer class="end-spacer"></v-spacer>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col>
-                      <funding-acknowledgement/>
-                    </v-col>
-                  </v-row>
-                </v-container>              
-              </v-card-text>
-            </v-card>
-          </v-window-item>
-        </v-window>
-      </v-card>
-    </v-dialog>
+      <!--
+        The Information Sheet and InfoPage are vue "tightly coupled" components
+        This means an InfoPage can only be used within an InformationSheet.
+        The info-page automatically registers itself as a tab in the information sheet, and unregisters itself when it is destroyed.
 
-  </div>
-</v-app>
+        v-model:tab is the name of the currently selected tab. It comes from the title in kebab-case or the value if specified
+        Each tab must havea unique value. If the sheet is closed and you want to show a specific tab, you must set
+        the showTextSheet to true and set the infoSheetTab to the value of the tab you want to show.
+        
+        Some available options are
+        hide-tabs: (default: false) hide the tab bar, but keep space for the close button
+        only-show-one: (default: false) only show the active tab, hide the others
+        closable: (default: true) show the close button
+      -->
+      <information-sheet
+        v-model="showTextSheet"
+        v-model:tab="infoSheetTab"
+        :tab-color="accentColor"
+        :slider-color="accentColor"
+        :accent-color="accentColor"
+        align-tabs="start"
+        compact-tabs
+      >
+        <!-- info-page content is wrapped in a .info-page class  -->
+        <info-page title="Information">
+          <!-- everything inside the info-page is wrapped in a div with class "info-page" -->
+          <!-- we generally use heading level 3 (the same level as the tabs) -->
+          <h3>Science Information</h3>
+          <p>Sample Science Information</p>
+        </info-page>
+
+        <!-- 
+        Example of an Info Page with a stable footer and scrollable upper section. 
+        -->
+        <!--
+        <info-page title="Example" name="example">
+          <div class="ip-example-header">[Optional] This will stay at the top</div>
+          <div class="flex-grow-1 overflow-y-auto my-5 bg-red">
+            <p>This will fill the middle and scroll if needed.</p>
+            <p>The <code>flex-grow: 1</code>, causes it to fill the parent's height because the parent
+              <code>.info-page</code> is <code>display: flex</code></p>
+            <p v-for="i in 100" :key="i">This is line {{ i }}</p>
+          </div>
+          <div class="ip-example-footer">This will stay at the bottom</div>
+        </info-page>
+        -->
+
+        <!-- the user guide is an <InfoPage title="User Guide" value="user-guide>...</InfoPage>"
+         it can be userful to move complex content into a separate component
+         -->
+        <user-guide />
+      </information-sheet>
+    </div>
+  </v-app>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, nextTick } from "vue";
-import { GotoRADecZoomParams, engineStore } from "@wwtelescope/engine-pinia";
-import { BackgroundImageset, skyBackgroundImagesets, supportsTouchscreen, blurActiveElement, useWWTKeyboardControls } from "@cosmicds/vue-toolkit";
-import { useDisplay } from "vuetify";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ref, reactive, computed, onMounted, watch } from "vue";
+import type { StyleValue } from "vue";
+import { WWTControl, Coordinates } from "@wwtelescope/engine";
+import { D2R } from "@wwtelescope/astro";
+import { GotoRADecZoomParams, WWTComponent as WorldWideTelescope, engineStore } from "@wwtelescope/engine-pinia";
+import {
+  BackgroundImageset,
+  skyBackgroundImagesets,
+  useWWTKeyboardControls,
+  IconButton,
+  CreditLogos,
+} from "@cosmicds/vue-toolkit";
+import SplashScreen from "./components/SplashScreen.vue";
+import VideoWrapper from "./components/VideoWrapper.vue";
+import WwtLoader from "./components/Loader.vue";
+import WebglTest from "./components/WebGlTest.vue";
+import InformationSheet from "./components/InformationSheet.vue";
+import InfoPage from "./components/InfoPage.vue";
+import UserGuide from "./components/UserGuide.vue";
+import { useAppLayout } from "./composables/useAppLayout";
 
-type SheetType = "text" | "video";
-type CameraParams = Omit<GotoRADecZoomParams, "instant">;
+const extraLogos = [
+  {
+    src: "./CfA_Logo_Vertical_Reverse.png",
+    href: "https://www.cfa.harvard.edu/",
+    alt: "Center for Astrophysics | Harvard & Smithsonian Logo",
+    name: "cfa",
+  },
+];
+
 export interface MainComponentProps {
   wwtNamespace?: string;
-  initialCameraParams?: CameraParams;
 }
 
 const store = engineStore();
 
 useWWTKeyboardControls(store);
 
-const touchscreen = supportsTouchscreen();
-const { smAndDown } = useDisplay();
+const { smallSize, sidePanel } = useAppLayout();
 
-const props = withDefaults(defineProps<MainComponentProps>(), {
+withDefaults(defineProps<MainComponentProps>(), {
   wwtNamespace: "vue-ds-template",
-  initialCameraParams: () => {
-    return {
-      raRad: 0,
-      decRad: 0,
-      zoomDeg: 60
-    };
-  }
 });
+
+const GALACTIC_CENTER = Coordinates.galactictoJ2000(0, 0);
+const initialCameraParams = {
+  raRad: GALACTIC_CENTER[0] * D2R,
+  decRad: GALACTIC_CENTER[1] * D2R,
+  zoomDeg: 360,
+} as Omit<GotoRADecZoomParams, "instant">;
 
 const splash = new URLSearchParams(window.location.search).get("splash")?.toLowerCase() !== "false";
 const showSplashScreen = ref(splash);
 const backgroundImagesets = reactive<BackgroundImageset[]>([]);
-const sheet = ref<SheetType | null>(null);
-const layersLoaded = ref(false);
-const positionSet = ref(false);
-const accentColor = ref("#ffffff");
-const buttonColor = ref("#ffffff");
-const tab = ref(0);
+
+const showVideo = ref(false);
+
+const showWebGL2Warning = ref(false);
+
+import { useTheme, useDisplay } from "vuetify";
+const theme = useTheme();
+// in the past we have used accentColor and accentColor2, but these serve the same purpose
+// as vuetify's primary and secondary colors, so we tie them to that. vuetify components
+// can access them directly as `color="primary" on the prop, and they are aleady available in the CSS as --v-theme-primary and --v-theme-secondary
+const accentColor = computed(() => theme.current.value.colors.primary);
+const accentColor2 = computed(() => theme.current.value.colors.secondary);
+
+const { xs } = useDisplay();
 
 onMounted(() => {
+  if (showWebGL2Warning.value) {
+    showSplashScreen.value = false;
+    WWTControl.singleton.canvas.setAttribute("hidden", "true");
+    WWTControl.singleton.renderOneFrame = function () {};
+    return;
+  }
+
   store.waitForReady().then(async () => {
-    skyBackgroundImagesets.forEach(iset => backgroundImagesets.push(iset));
-    store.gotoRADecZoom({
-      ...props.initialCameraParams,
-      instant: true
-    }).then(() => positionSet.value = true);
+    skyBackgroundImagesets.forEach((iset) => backgroundImagesets.push(iset));
+    store
+      .gotoRADecZoom({
+        ...initialCameraParams,
+        instant: true,
+      })
+      .then(() => (positionSet.value = true));
 
     // If there are layers to set up, do that here!
     layersLoaded.value = true;
   });
 });
 
+const layersLoaded = ref(false);
+const positionSet = ref(false);
 const ready = computed(() => layersLoaded.value && positionSet.value);
 
 /* `isLoading` is a bit redundant here, but it could potentially have independent logic */
 const isLoading = computed(() => !ready.value);
 
-/* Properties related to device/screen characteristics */
-const smallSize = computed(() => smAndDown.value);
-
-/** Values related to setting the info sheet size and position */
-const infoFraction = 34;
-const tall = computed(() => smAndDown.value);
-const widescreenInfoLocation = ref<"right" | "bottom">("right");
-const infoSheetLocation = computed(() => tall.value || widescreenInfoLocation.value === "bottom" ? "bottom" : "right");
-const infoSheetHeight = computed(() => infoSheetLocation.value === "bottom" ? `${infoFraction}%` : "100%");
-const infoSheetWidth = computed(() => infoSheetLocation.value === "bottom" ? "100%" : `${infoFraction}%`);
-const infoTextHeight = computed(() => infoSheetLocation.value === "bottom" ? `calc(${infoFraction}vh - 25px)` : "calc(100vh - 25px)");
-const infoSheetTransition = computed(() => infoSheetLocation.value === "bottom" ? "dialog-bottom-transition" : "tab-reverse-transition");
-
+// we do not need to add the accent colors anymore since they are availabe via the css theme
+// but we use this to demonstrate the pattern.
 /* This lets us inject component data into element CSS */
 const cssVars = computed(() => {
   return {
-    "--accent-color": accentColor.value,
-    "--app-content-height": showTextSheet.value && infoSheetLocation.value === "bottom" ? `${100 - infoFraction}%` : "100%",
-    "--app-content-width": showTextSheet.value && infoSheetLocation.value === "right" ? `${100 - infoFraction}%` : "100%",
-    "--info-sheet-width": infoSheetWidth.value,
-    "--info-sheet-height": infoSheetHeight.value,
-    "--info-text-height": infoTextHeight.value,
-  };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ["--accent-color" as any]: accentColor.value,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ["--accent-color-2" as any]: accentColor2.value,
+  } as StyleValue;
 });
-
 
 /**
   Computed flags that control whether the relevant dialogs display.
@@ -329,27 +271,14 @@ const cssVars = computed(() => {
   computed wrappers around modifying/querying that which can be used as
   dialog v-model values
 */
-const showTextSheet = computed({
-  get() {
-    return sheet.value === "text";
-  },
-  set(_value: boolean) {
-    selectSheet("text");
-  }
-});
-
-const showVideoSheet = computed({
-  get() {
-    return sheet.value === "video";
-  },
-  set(value: boolean) {
-    selectSheet("video");
-    if (!value) {
-      const video = document.querySelector("#info-video") as HTMLVideoElement;
-      video.pause();
-    }
-  }
-});
+const showTextSheet = ref(false);
+const infoSheetTab = ref("");
+/** open a tab on the info sheet */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function openInfoSheetTab(tabValue: string) {
+  infoSheetTab.value = tabValue;
+  showTextSheet.value = true;
+}
 
 /**
   This is convenient if there's any other logic that we want to run
@@ -358,28 +287,25 @@ const showVideoSheet = computed({
 function closeSplashScreen() {
   showSplashScreen.value = false;
 }
-
-function selectSheet(sheetType: SheetType | null) {
-  if (sheet.value === sheetType) {
-    sheet.value = null;
-    nextTick(() => {
-      blurActiveElement();
-    });
-  } else {
-    sheet.value = sheetType;
-  }
-}
 </script>
 
 <style lang="less">
-@font-face {
-  font-family: "Highway Gothic Narrow";
-  src: url("./assets/HighwayGothicNarrow.ttf");
+@import url(@/css/universal.css);
+:root {
+  --default-font-size: clamp(0.7rem, 1.7vmin, 1.1rem);
+  --default-line-height: clamp(1rem, 2.2vmin, 1.6rem);
 }
 
-:root {
-  --default-font-size: clamp(0.7rem, min(1.7vh, 1.7vw), 1.1rem);
-  --default-line-height: clamp(1rem, min(2.2vh, 2.2vw), 1.6rem);
+// based on Sara Soueidan (https://www.sarasoueidan.com/blog/focus-indicators/) & Erik Kroes (https://www.erikkroes.nl/blog/the-universal-focus-state/)
+:focus-visible:not(.v-btn):not(.v-field):not(.v-input) {
+  // outline: 4px double white;
+  // box-shadow: 0 0 0 2px black;
+  outline: none; /* outline needs to be none to override the broswer */
+  box-shadow:
+    inset 0 0 0 2px white,
+    0 0 0 3px #0b5cb3,
+    0 0 0 5px white;
+  border-radius: 0.125rem;
 }
 
 html {
@@ -389,7 +315,6 @@ html {
   background-color: #000;
   overflow: hidden;
 
-  
   -ms-overflow-style: none;
   // scrollbar-width: none;
 }
@@ -405,86 +330,67 @@ body {
   font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
-#main-content {
-  position: fixed;
-  width: var(--app-content-width);
-  height: var(--app-content-height);
-  overflow: hidden;
-
-  transition: height 0.1s ease-in-out;
-}
 
 #app {
   width: 100%;
   height: 100%;
   margin: 0;
   overflow: hidden;
+  overscroll-behavior: none;
   font-size: 11pt;
+}
 
-  .wwtelescope-component {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    border-style: none;
-    border-width: 0;
-    margin: 0;
-    padding: 0;
-  }
+#main-content {
+  // containing block for the absolutely positioned WWT host and overlay
+  position: relative;
+  display: block;
+  // shrinkable with no min-size floor, so an open drawer takes its share of the space
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
 }
 
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.modal {
+// WWT fills #main-content, which gets its size from the flex layout above.
+// This breaks if #main-content stops having a definite size from layout.
+.wwtelescope-component {
   position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  z-index: 100;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 
-#modal-loading {
-  background-color: #000;
-  .container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    .spinner {
-      background-image: url("https://projects.cosmicds.cfa.harvard.edu/cds-website/misc/lunar_loader.gif");
-      background-repeat: no-repeat;
-      background-size: contain;
-      width: 3rem;
-      height: 3rem;
-    }
-    p {
-      margin: 0 0 0 1rem;
-      padding: 0;
-      font-size: 150%;
-    }
-  }
+.wwtelescope-component > canvas {
+  display: block;
+}
+
+// #wwt-overlay is positioned against #main-content, not the viewport
+#wwt-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  padding-inline: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 0.5rem;
+  pointer-events: none;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; // pushes top and bottom content apart
+}
+
+#wwt-overlay > * {
+  // turns each item in #wwt-overlay into a stacking context
+  isolation: isolate;
 }
 
 #top-content {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  width: calc(100% - 2rem);
-  pointer-events: none;
+  width: 100%;
+  pointer-events: auto;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -494,6 +400,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  pointer-events: auto;
 }
 
 #right-buttons {
@@ -502,218 +409,119 @@ body {
   gap: 10px;
   align-items: flex-end;
   height: auto;
+  pointer-events: auto;
 }
 
 #bottom-content {
   display: flex;
   flex-direction: column;
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  width: calc(100% - 2rem);
-  pointer-events: none;
-  align-items: center;
-  gap: 5px;
-}
-
-#splash-overlay {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-#splash-screen {
-  color: #FFFFFF;
-  background-color: #000000;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  align-content: center;
-  justify-content: space-around;
-
-  font-family: 'Highway Gothic Narrow', 'Roboto', sans-serif;
-  font-size: min(8vw, 7vh);
-
-  border-radius: 10%;
-  border: min(1.2vw, 0.9vh) solid var(--accent-color);
-  overflow: auto;
-  padding-top: 4rem;
-  padding-bottom: 1rem;
-
-  @media (max-width: 699px) {
-    max-height: 80vh;
-    max-width: 90vw;
-  }
-
-  @media (min-width: 700px) {
-    max-height: 85vh;
-    max-width: min(70vw, 800px);
-  }
-
-  div {
-    margin-inline: auto;
-    text-align: center;
-  }
-
-  .small {
-    font-size: var(--default-font-size);
-    font-weight: bold;
-  }
-
-  #close-splash-button {
-    position: absolute;
-    top: 0.5rem;
-    right: 1.75rem;
-    text-align: end;
-    color: var(--accent-color);
-    font-size: min(8vw, 5vh);
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
-}
-
-// From Sara Soueidan (https://www.sarasoueidan.com/blog/focus-indicators/) & Erik Kroes (https://www.erikkroes.nl/blog/the-universal-focus-state/)
-:focus-visible,
-button:focus-visible,
-.focus-visible,
-.v-selection-control--focus-visible .v-selection-control__input {
-  outline: 9px double white !important;
-  box-shadow: 0 0 0 6px black !important;
-  border-radius: .125rem;
-}
-
-.video-wrapper {
-  height: 100%;
-  background: black;
-  text-align: center;
-  z-index: 1000;
-
-  #video-close-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 15;
-    
-    &:hover {
-      cursor: pointer;
-    }
-
-    &:focus {
-      color: white;
-      border: 2px solid white;
-    }
-  }
-}
-
-video {
-  height: 100%;
-  width: auto;
-  max-width: 100%;
-  object-fit: contain;
-}
-
-#info-video {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  padding: 0px;
-  z-index: 10;
+  pointer-events: auto;
+  align-items: flex-end;
+  gap: 5px;
+
+  // neither #logo-credits nor #icons-container are flex
+  #logo-credits > #icons-container {
+    a {
+      margin-inline: 0.3em;
+    }
+  }
 }
 
-.info-sheet {
-  .v-overlay__content {
-    align-self: flex-end;
-    padding: 0;
-    margin: 0 !important;
-    max-width: 100% !important;
-    height: var(--info-sheet-height) !important;
-    width: var(--info-sheet-width) !important;
+.icon-wrapper {
+  // give us circles.
+  border-radius: 50% !important;
+  aspect-ratio: 1/1;
+  // even padding
+  padding: 8px !important;
+}
+
+.icon-wrapper.tonal {
+  // tonal style
+  background-color: rgba(var(--v-theme-primary), 0.4) !important;
+  color: rgba(var(--v-theme-primary), 0.9) !important;
+  border: none !important;
+}
+
+.icon-wrapper.tonal:hover {
+  background-color: rgba(var(--v-theme-primary), 0.6) !important;
+  color: rgba(var(--v-theme-primary), 1) !important;
+}
+
+/** ====== Define our standard Side/Bottom panel layout
+The default DOM structure is basically
+<div #app>
+  <div .v-application__wrap>
+    <div #main-content>
+      <WorldWideTelescope />
+      <div #wwt-overlay />
+    </div>
+    <div #drawer />
+  </div>
+</div>
+======== */
+
+// Default is the column/bottom-panel layout; a side panel opts in with .app-side-panel
+#app > .v-application__wrap {
+  // default, but specify anyway
+  flex-direction: column;
+  max-height: 100svh;
+}
+
+#app.app-side-panel > .v-application__wrap {
+  flex-direction: row;
+}
+
+// side-panel layout: #drawer follows #main-content in the DOM,
+// so flipping the order is what puts the panel on the left of the view
+// order sets the order of the children of a flex container
+#app.app-side-panel {
+  #main-content {
+    order: 1; // on the right
   }
 
-  &.info-sheet-right .v-overlay__content {
-    position: absolute;
-    top: 0;
-    right: 0;
-    max-height: 100%;
+  #drawer {
+    order: 0; // on the left
+  }
+}
 
-    & .v-card, & .v-card .v-window {
-      height: 100%;
-    }
-    
-    & .info-tabs h3 {
-      font-size: 10pt;
-    }
-  }
+// in-flow flex sibling of #main-content, so opening it shrinks the WWT view
+// instead of covering it. Default is the bottom panel: full width, growing in height.
+#drawer {
+  flex: 0 0 auto;
+  overflow: hidden;
+  width: 100%;
+  height: 0;
+  border-radius: 5px 5px 0 0;
 
-  #tabs {
-    width: calc(100% - 3em);
-    align-self: left;
+  &.drawer-open {
+    height: 34%;
   }
+}
 
-  .info-text {
-    height: var(--info-text-height);
-    padding-bottom: 25px;
-  
-    & a {
-      text-decoration: none;
-    }
+// side panel: full height, growing in width
+.app-side-panel #drawer {
+  width: 0;
+  height: 100%;
+  border-radius: 0 5px 5px 0;
+
+  &.drawer-open {
+    width: 34%;
   }
-  
-  .close-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 15;
-  
-    &:hover {
-      cursor: pointer;
-    }
-  
-    &:focus {
-      color: white;
-      border: 2px solid white;
-    }
-  }
-  
-  .scrollable {
-    overflow-y: auto;
-  }
-  
-  #tab-items {
-    // padding-bottom: 2px !important;
-  
-    .v-card-text {
-      font-size: ~"max(14px, calc(0.7em + 0.3vw))";
-      padding-top: ~"max(2vw, 16px)";
-      padding-left: ~"max(4vw, 16px)";
-      padding-right: ~"max(4vw, 16px)";
-  
-      .end-spacer {
-        height: 25px;
-      }
-    }
-  
-  }
-  
-  #close-text-icon {
-    position: absolute;
-    top: 0.25em;
-    right: calc((3em - 0.6875em) / 3); // font-awesome-icons have width 0.6875em
-    color: white;
+}
+
+/** ===================== */
+
+// Basic text styling for the InformationSheet's content 
+// it is better to set in the main app than to set things in the component
+// since the component may end up being imported from the toolkit. 
+.cds-info-sheet .info-page {
+  h3 {
+    color: steelblue;
   }
 
-  // This prevents the tabs from having some extra space to the left when the screen is small
-  // (around 400px or less)
-  .v-tabs:not(.v-tabs--vertical).v-tabs--right>.v-slide-group--is-overflowing.v-tabs-bar--is-mobile:not(.v-slide-group--has-affixes) .v-slide-group__next, .v-tabs:not(.v-tabs--vertical):not(.v-tabs--right)>.v-slide-group--is-overflowing.v-tabs-bar--is-mobile:not(.v-slide-group--has-affixes) .v-slide-group__prev {
-    display: none;
-  }
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 </style>

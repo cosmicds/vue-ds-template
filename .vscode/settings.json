@@ -1,0 +1,13 @@
+{
+  "[vue]": { "editor.defaultFormatter": "dbaeumer.vscode-eslint" },
+  "[typescript]": { "editor.defaultFormatter": "dbaeumer.vscode-eslint" },
+  "[javascript]": { "editor.defaultFormatter": "dbaeumer.vscode-eslint" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "editor.formatOnSave": false,
+  "editor.formatOnPaste": false,
+  "prettier.requireConfig": true,
+  "eslint.format.enable": true,
+  "emmet.includeLanguages": { "vue-html": "html" },
+  "files.associations": { "*.wtml": "xml" },
+  "js/ts.tsdk.path": "node_modules/typescript/lib"
+}

@@ -22,6 +22,18 @@ if [[ $# -gt 1 ]]; then
 fi
 
 name=$1
+target="../${name}"
+
+if [[ -e "$target" ]]; then
+    echo "${target} already exists!"
+    exit 2
+fi
+
+# make the target folder and copy everything except .git, node_modules, and dist. 
+mkdir -p "$target"
+rsync -a --exclude='.git' --exclude='node_modules' --exclude='dist' ./ "$target"/
+
+cd "$target"
 
 node scripts/update-name.js "@cosmicds/${name}"
 pascal_case_name=$(to_pascal_case $name)
@@ -36,13 +48,17 @@ rm -f main.ts.bak
 mv MainComponent.vue ${pascal_case_name}.vue
 rm -f MainComponent.vue.bak
 
-cd ../public
+cd ..
 sed -i.bak "s/CosmicDS data story template/$pascal_case_name/g" index.html
 sed -i.bak "s/CosmicDS Vue template/$title/g" index.html
-sed -i.bak "s/CosmicDS Vue Template/$title/g" site.webmanifest
 rm -f index.html.bak
+
+cd public
+sed -i.bak "s/CosmicDS Vue Template/$title/g" site.webmanifest
 rm -f site.webmanifest.bak
 
-# Clear out git info since we don't want this to point to the vue-ds-template repo anymore
 cd ..
-rm -rf .git
+rm -rf scripts
+
+
+echo "Done! The new story is at ${target} - you can now run 'yarn install' there to install dependencies."
