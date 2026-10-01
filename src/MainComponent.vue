@@ -157,7 +157,8 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ref, reactive, computed, onMounted, watch } from "vue";
 import type { StyleValue } from "vue";
-import { WWTControl } from "@wwtelescope/engine";
+import { WWTControl, Coordinates } from "@wwtelescope/engine";
+import { D2R } from "@wwtelescope/astro";
 import { GotoRADecZoomParams, WWTComponent as WorldWideTelescope, engineStore } from "@wwtelescope/engine-pinia";
 import {
   BackgroundImageset,
@@ -198,10 +199,11 @@ withDefaults(defineProps<MainComponentProps>(), {
   wwtNamespace: "vue-ds-template",
 });
 
+const GALACTIC_CENTER = Coordinates.galactictoJ2000(0, 0);
 const initialCameraParams = {
-  raRad: 0,
-  decRad: 0,
-  zoomDeg: 60,
+  raRad: GALACTIC_CENTER[0] * D2R,
+  decRad: GALACTIC_CENTER[1] * D2R,
+  zoomDeg: 360,
 } as Omit<GotoRADecZoomParams, "instant">;
 
 const splash = new URLSearchParams(window.location.search).get("splash")?.toLowerCase() !== "false";
